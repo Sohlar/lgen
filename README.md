@@ -46,7 +46,8 @@ Choose a search engine or a combination of search engines.
 Enter your query and any additional parameters (e.g., city for Google Maps).
 Click "Search" to start the scraping process.
 The app will save the results in a CSV file in the output directory.
-Tests 🧪
+
+## Tests 🧪
 Run the tests using pytest:
 ```console
 pytest
@@ -60,4 +61,4 @@ This project is licensed under the MIT License.
 ## Questions or Issues ❓
 If you have any questions or issues, please open an issue on GitHub.
 
-Made with 💙 by Your Name
+Made with 💙 by Sohlar
