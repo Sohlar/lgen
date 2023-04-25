@@ -77,7 +77,7 @@ class GoogleSearch(SearchEngine):
 
     def search(self, query, start_index=10, num_results=10):
         url_results = []
-        for start_index in range(1,100,10):    
+        for start_index in range(1, num_results,10):    
             base_url = 'https://www.googleapis.com/customsearch/v1'
             params = {
                 'key': GOOG_API_KEY,
@@ -93,9 +93,9 @@ class GoogleSearch(SearchEngine):
 
 class BingSearch(SearchEngine):
 
-    def search(self, query, offset=0, count=10):
+    def search(self, query, offset=10, num_urls=10):
         url_results = []
-        for offset in range(0, 100, 10):
+        for offset in range(0, num_urls, 10):
             base_url = 'https://api.bing.microsoft.com/v7.0/search'
             headers = {
                 'Ocp-Apim-Subscription-Key': BING_API_KEY
@@ -103,14 +103,14 @@ class BingSearch(SearchEngine):
             params = {
                 'q': query,
                 'offset': offset,
-                'count': count
+                'count': num_urls
             }
             response = requests.get(base_url, headers=headers, params=params)
             data = response.json()
             #data['webPages']['value']['id']
             foo = data['webPages']
             url_results.extend(self._find_contact_info(item['url'], params) for item in foo['value'])
-            time.sleep(2)
+            time.sleep(1)
         return url_results
     
 class EbaySearch(SearchEngine):

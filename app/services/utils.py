@@ -1,11 +1,12 @@
 import pandas as pd
 import re
 from concurrent.futures import ThreadPoolExecutor
+from search_engine_factory import SearchEngineFactory
 
-def search_and_record(engine, query, filepath, **kwargs):
+def search_and_record(engine, query, filepath, num_urls, **kwargs):
     
     search_engine = SearchEngineFactory().create_search_engine(engine)
-    results = search_engine.search(query, **kwargs)
+    results = search_engine.search(query, num_rurls=num_urls)
 
     sanitized_query = re.sub(r'\W+', '', query.replace(' ', '_'))
 

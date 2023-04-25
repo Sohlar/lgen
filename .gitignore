@@ -2,3 +2,4 @@ flaskenv
 .pyc
 *.pyc
 *.env
+env

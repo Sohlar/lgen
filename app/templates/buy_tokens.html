@@ -1,0 +1,6 @@
+{% extends 'base_html' %}
+{% block content %}
+	<div class = 'container-mt4'>
+		<h1 class='mb-4'>Purchase Tokens</h1>
+		<form id="purchase-form" action={{ url_for('main.buy_tokens') }}>
+			<div class>
