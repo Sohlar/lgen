@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 from concurrent.futures import ThreadPoolExecutor
-from search_engine_factory import SearchEngineFactory
+from .search_engine_factory import SearchEngineFactory
 
 def search_and_record(engine, query, filepath, num_urls, **kwargs):
     

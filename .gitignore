@@ -3,3 +3,4 @@ flaskenv
 *.pyc
 *.env
 env
+migrations

@@ -15,9 +15,9 @@ BING_API_KEY = os.environ.get("BING_API_KEY")
 if not BING_API_KEY:
     raise ValueError('BING_API_KEY environment variable not set')
 
-STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
+""" STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
 if not STRIPE_API_KEY:
-    raise ValueError('STRIPE_API_KEY environment variable not set')
+    raise ValueError('STRIPE_API_KEY environment variable not set') """
 '''
 EBAY_API_KEY = os.environ.get("EBAY_API_KEY")
 if not EBAY_API_KEY:

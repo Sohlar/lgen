@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Contact Info Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <!-- Add your navigation bar here -->
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Register</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url_for('main.register') }}" method="POST">
+                            {{ form.hidden_tag() }}
+                            <div class="mb-3">
+                                <label for="{{ form.username.id }}" class="form-label">Username</label>
+                                {{ form.username(class="form-control") }}
+                                {% if form.username.errors %}
+                                    <small class="text-danger">{{ form.username.errors[0] }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.email.id }}" class="
+                                {{ form.email(class="form-control") }}
+                                {% if form.email.errors %}
+                                    <small class="text-danger">{{ form.email.errors[0] }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.password.id }}" class="form-label">Password</label>
+                                {{ form.password(class="form-control") }}
+                                {% if form.password.errors %}
+                                    <small class="text-danger">{{ form.password.errors[0] }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.password2.id }}" class="form-label">Repeat Password</label>
+                                {{ form.password2(class="form-control") }}
+                                {% if form.password2.errors %}
+                                    <small class="text-danger">{{ form.password2.errors[0] }}</small>
+                                {% endif %}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
