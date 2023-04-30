@@ -8,6 +8,7 @@ from app.services.search_engines import GoogleSearch, BingSearch
 from app.services.search_engine_factory import SearchEngineFactory
 from app.services.utils import search_and_record, drop_non_results
 from app.main.forms import TokenPurchaseForm
+from .helpers import get_profile_css_class
 
 """ import stripe
  """
@@ -36,13 +37,13 @@ def index():
             search_engine = SearchEngineFactory().create_search_engine(engine)
             # Perform the search and record the results
             results = search_and_record(search_engine, query)
-            return render_template('index.html', results=results, title='Home')
+            return render_template('index.html', results=results, title='Home', get_profile_css_class=get_profile_css_class)
 
         else:
             flash('Not enough tokens. Please purchase more tokens to continue.')
 
     #Process the results and render them in the template
-    return render_template('index.html', title='Home', form=form)
+    return render_template('index.html', title='Home', form=form, get_profile_css_class=get_profile_css_class)
 
 @main_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -50,10 +51,12 @@ def register():
         return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        print(form.errors)
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        print("User added to the database")
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('main.login'))
     return render_template('register.html', title='Register', form=form)
@@ -105,11 +108,12 @@ def login():
             return redirect(url_for('main.index'))
         else:
             flash('Invalid username or password')
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Sign In', form=form, get_profile_css_class=get_profile_css_class)
 
 @main_bp.route('/logout')
 @login_required
 def logout():
+    flash('Successfully logged out')
     logout_user()
     return redirect(url_for('main.index'))
 

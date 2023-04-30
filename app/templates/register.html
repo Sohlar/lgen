@@ -19,7 +19,7 @@
                         <h4>Register</h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ url_for('main.register') }}" method="POST">
+                        <form action="{{ url_for('main.register') }}" method="POST" novalidate>
                             {{ form.hidden_tag() }}
                             <div class="mb-3">
                                 <label for="{{ form.username.id }}" class="form-label">Username</label>
@@ -29,7 +29,7 @@
                                 {% endif %}
                             </div>
                             <div class="mb-3">
-                                <label for="{{ form.email.id }}" class="
+                                <label for="{{ form.email.id }}" class="form-label">Email</label>
                                 {{ form.email(class="form-control") }}
                                 {% if form.email.errors %}
                                     <small class="text-danger">{{ form.email.errors[0] }}</small>
