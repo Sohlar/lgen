@@ -45,6 +45,11 @@ def index():
     #Process the results and render them in the template
     return render_template('index.html', title='Home', form=form, get_profile_css_class=get_profile_css_class)
 
+@main_bp.route('/profile.html', methods=['GET', 'POST'])
+@login_required
+def profile():
+    return render_template('profile.html', title='Profile', user=current_user)
+
 @main_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:

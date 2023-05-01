@@ -1,6 +1,15 @@
-{% extends 'base_html' %}
+{% extends 'base.html' %}
+
 {% block content %}
-	<div class = 'container-mt4'>
-		<h1 class='mb-4'>Purchase Tokens</h1>
-		<form id="purchase-form" action={{ url_for('main.buy_tokens') }}>
-			<div class>
+  <div class="container mt-4">
+    <h1 class="mb-4">Purchase Tokens</h1>
+    <form id="purchase-form" action="{{ url_for('main.buy_tokens') }}" method="POST">
+      <div class="mb-3">
+        <label for="num_tokens" class="form-label">Number of tokens</label>
+        <input type="number" class="form-control" id="num_tokens" name="num_tokens" min="1" required>
+      </div>
+      <!-- Add credit card information fields here -->
+      <button type="submit" class="btn btn-primary">Purchase Tokens</button>
+    </form>
+  </div>
+{% endblock %}

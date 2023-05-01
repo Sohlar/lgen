@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
+    <!--
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index') }}">Contact Info Finder</a>
@@ -17,34 +18,17 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="TokenDropdown">Buy Tokens</a>
-                        <div class="dropdown-menu" aria-labelledby="tokenDropdown">
-                            <form class="px 4 y 3" action="{{ url_for('main.buy_tokens')}}" method="POST">
-                                {{form.hidden_tag() }}
-                                <div class="mb-3">
-                                    <label for="num_tokens" class="form-label">Number of Tokens</label>
-                                    <input type="number" class="form-control" id="num_tokens" name="num_tokens" placeholder="Enter the number of tokens to buy">
-                                </div>
-                                <!--Add stripe payment form-->
-                                <button type="submit" class="btn btn-primary">Purchase</button>
-                            </form>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.login') }}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.logout') }}">Logout</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.register') }}">Register</a>
-                    </li>
+
+
                 </ul>
             </div>
         </div>
     </nav>
+    -->
 
+    {% extends 'base.html' %}
+
+    {% block content %}Contact Info Finder
     <div class="container mt-4">
         <h1 class="mb-4">Search for Contact Information</h1>
         <form action="{{ url_for('main.index') }}" method="POST">
@@ -91,5 +75,6 @@
             {% endif %}
         {% endif %}
     </div>
+    {% endblock %}
 </body>
 </html>

@@ -1,9 +1,11 @@
 def get_profile_css_class(user):
+    if not user.is_authenticated:
+        return ''
     if user.subscription == 'free':
-        return 'profile-free'
+        return 'text-primary'
     elif user.subscription == 'silver':
-        return 'profile-silver'
+        return 'text-success'
     elif user.subscription == 'gold':
-        return 'profile-gold'
+        return 'text-danger'
     else:
-        return 'profile-default'  # Fallback CSS class in case of an unknown subscription
+        return ''  # Fallback CSS class in case of an unknown subscription

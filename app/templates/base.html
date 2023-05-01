@@ -18,16 +18,51 @@
       <div class="container">
         <a class="navbar-brand" href="{{ url_for('main.index') }}">Lead Generation</a>
         <ul class="navbar-nav ml-auto">
+          {% if not current_user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('main.profile') }}">Profile</a>
+              <a class="nav-link" href="{{ url_for('main.login') }}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('main.register') }}">Register</a>
+          </li>
+          {% endif %}  
+          {% if current_user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="TokenDropdown">Buy Tokens</a>
+            <div class="dropdown-menu" aria-labelledby="tokenDropdown">
+              <form class="px 4 y 3" action="{{ url_for('main.buy_tokens')}}" method="POST">
+                {{form.hidden_tag() }}
+                <div class="mb-3">
+                  <label for="num_tokens" class="form-label">Number of Tokens</label>
+                  <input type="number" class="form-control" id="num_tokens" name="num_tokens" placeholder="Enter the number of tokens to buy">
+                </div>
+                <!--Add stripe payment form-->
+                <button type="submit" class="btn btn-primary">Purchase</button>
+              </form>
+            </div>
+          </li>
+          <li class="nav-item">
+            
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Profile
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                <a class="dropdown-item" href="{{ url_for('main.profile') }}">Profile</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ url_for('main.logout') }}">Logout</a>
+
+            </div>
           </li>
           <li class="nav-item">
             <span class="bi bi-person-fill {{ get_profile_css_class(current_user) }}"></span>
+            <span class="nav-link">{{ current_user.tokens if current_user.tokens else 0}}</span>
           </li>
+          {% endif %}
         </ul>
       </div>
     </nav>
-
     <div class="container">
       {% for message in get_flashed_messages() %}
         <div class="alert alert-danger mt-2">{{ message }}</div>
