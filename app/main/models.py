@@ -20,3 +20,22 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+class SearchHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    query = db.Column(db.String(256))
+    engine = db.Column(db.String(64))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    user = db.relationship('User', backref='search_history')
+    results = db.relationship('SearchResult', backref='parent_search_history', lazy='dynamic')
+
+class SearchResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    search_history_id = db.Column(db.Integer, db.ForeignKey('search_history.id'))
+    email = db.Column(db.String(256))
+    phone = db.Column(db.String(64))
+    url = db.Column(db.String(256))
+
+    search_history = db.relationship('SearchHistory', backref='search_results')

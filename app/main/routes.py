@@ -1,14 +1,15 @@
-from flask import render_template, url_for, flash, redirect, request, jsonify
+from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from app.main import main_bp
 from app.main.forms import LoginForm, TokenPurchaseForm, RegistrationForm
-from app.main.models import User
+from app.main.models import User, SearchHistory, SearchResult
 from app import db
 from app.services.search_engines import GoogleSearch, BingSearch
 from app.services.search_engine_factory import SearchEngineFactory
 from app.services.utils import search_and_record, drop_non_results
 from app.main.forms import TokenPurchaseForm
 from .helpers import get_profile_css_class
+from datetime import datetime
 
 """ import stripe
  """
@@ -33,17 +34,43 @@ def index():
             current_user.tokens -= cost
             db.session.commit()
 
+            # Save search history
+            search_history = SearchHistory(user_id=current_user.id, query=query, engine=engine, timestamp=datetime.utcnow())
+            db.session.add(search_history)
+            db.session.commit()
+
             # Create a search engine using the factory
             search_engine = SearchEngineFactory().create_search_engine(engine)
             # Perform the search and record the results
             results = search_and_record(search_engine, query)
-            return render_template('index.html', results=results, title='Home', get_profile_css_class=get_profile_css_class)
+            for result in results:
+                search_result = SearchResult(search_history_id=search_history.id, email=search_history.email, phone=search_history.phone, url=result.url)
+                db.session.add(search_result)
+            db.session.commit()
 
+            return render_template('index.html', results=results, title='Home', get_profile_css_class=get_profile_css_class)
         else:
             flash('Not enough tokens. Please purchase more tokens to continue.')
 
     #Process the results and render them in the template
     return render_template('index.html', title='Home', form=form, get_profile_css_class=get_profile_css_class)
+
+@main_bp.route('/search_history', methods=['GET'])
+@login_required
+def search_history():
+    search_history = sorted(current_user.search_history, key=lambda x: x.timestamp, reverse=True)
+    return render_template('search_history.html', search_history=search_history, title='Search History', get_profile_css_class=get_profile_css_class)
+
+@main_bp.route('/view_search/<int:search_history_id>', methods=['GET'])
+@login_required
+def view_search(search_history_id):
+    search_history_item = SearchHistory.query.get_or_404(search_history_id)
+    if search_history_item.user_id != current_user.id:
+        abort(403)
+    search_results = search_history_item.results.all()
+    return render_template('view_search.html', search_history_item=search_history_item, title='View Search', get_profile_css_class=get_profile_css_class)
+
+
 
 @main_bp.route('/profile.html', methods=['GET', 'POST'])
 @login_required
@@ -69,15 +96,26 @@ def register():
 @main_bp.route('/buy_tokens', methods=['GET', 'POST'])
 @login_required
 def buy_tokens():
+    """
+    Process the purchase of tokens by the user using the TokenPurchaseForm. Validates the form data,
+    creates a Stripe charge for the token purchase, updates the user's token balance in the
+    database, and returns an appropriate response depending on the success of the operation.
+
+    :return: A JSON response indicating the status ('error' or 'success') and a message
+             describing the result of the operation.
+    """
     form = TokenPurchaseForm()
+
+    #Check if form is submitted and vlidated
     if form.validate_on_submit():
-        #calc token cost
-        
+        #calc token cost  
         num_tokens = form.num_tokens.data * 110
         user = current_user
         
+        #Variable to track payment success
         success = False
         try:
+            #Create a stripe charge for the token purchase
             charge = stripe.Charge.create(
                 amount=num_tokens,
                 currency='usd',
@@ -89,6 +127,7 @@ def buy_tokens():
             current_user.tokens += form.num_tokens.data
             db.session.commit()
 
+            #Show success message
             flash(f'Success! You have purchased {form.num_tokens.data} tokens.', 'success')
             success = True
         

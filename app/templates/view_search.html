@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Search Details</h1>
+<h3>Search Query: {{ search.query }}</h3>
+<h3>Search Engine: {{ search.engine }}</h3>
+<h3>Timestamp: {{ search.timestamp }}</h3>
+
+<h4>Search Results:</h4>
+<ul>
+    {% for result in search_results %}
+    <li>
+        <div>Email: {{ result.email }}</div>
+        <div>Phone: {{ result.phone }}</div>
+        <div>URL: {{ result.url }}</div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

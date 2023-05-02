@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="mt-4">Search History</h1>
+
+    {% if search_history %}
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Query</th>
+                    <th scope="col">Engine</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Results</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for history_item in search_history %}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ history_item.query }}</td>
+                        <td>{{ history_item.engine }}</td>
+                        <td>{{ history_item.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#results_{{ history_item.id }}" aria-expanded="false" aria-controls="results_{{ history_item.id }}">
+                                Show Results
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <div class="collapse" id="results_{{ history_item.id }}">
+                                <div class="card card-body">
+                                    {% set results = history_item.results.all() %}
+                                    {% if results %}
+                                        <table class="table table-sm table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Email</th>
+                                                    <th>Phone</th>
+                                                    <th>URL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for result in results %}
+                                                    <tr>
+                                                        <td>{{ result.email }}</td>
+                                                        <td>{{ result.phone }}</td>
+                                                        <td>{{ result.url }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% else %}
+                                        <p>No results found for this query.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="mt-4">No search history found.</p>
+    {% endif %}
+{% endblock %}

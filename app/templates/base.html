@@ -31,7 +31,9 @@
             <a class="nav-link dropdown-toggle" href="#" id="TokenDropdown">Buy Tokens</a>
             <div class="dropdown-menu" aria-labelledby="tokenDropdown">
               <form class="px 4 y 3" action="{{ url_for('main.buy_tokens')}}" method="POST">
-                {{form.hidden_tag() }}
+                {% if form %}
+                    {{form.hidden_tag() }}
+                {% endif %}
                 <div class="mb-3">
                   <label for="num_tokens" class="form-label">Number of Tokens</label>
                   <input type="number" class="form-control" id="num_tokens" name="num_tokens" placeholder="Enter the number of tokens to buy">
@@ -52,8 +54,10 @@
                 <a class="dropdown-item" href="{{ url_for('main.profile') }}">Profile</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{{ url_for('main.logout') }}">Logout</a>
-
             </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('main.search_history') }}">Search History</a>
           </li>
           <li class="nav-item">
             <span class="bi bi-person-fill {{ get_profile_css_class(current_user) }}"></span>
