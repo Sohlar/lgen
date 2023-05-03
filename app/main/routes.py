@@ -11,8 +11,7 @@ from app.main.forms import TokenPurchaseForm
 from .helpers import get_profile_css_class
 from datetime import datetime
 
-""" import stripe
- """
+import stripe
 TOKENS_PER_RESULT = 100
 
 
@@ -138,7 +137,7 @@ def buy_tokens():
             user.tokens += num_tokens
             db.session.commit()
             return jsonify({'status': 'error', 'message': 'Success'})
-    return jsonify({'status': 'error', 'message': 'Invalid form submission'})
+    return render_template('buy_tokens.html', title='Buy Tokens', form=form)
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():

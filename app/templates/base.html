@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3+8/0vRzmJAAKwv5/0gMvv3AR3u2fg" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<!--     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+ -->    
 
     <title>{% block title %}Default Title{% endblock %}</title>
   </head>
@@ -27,24 +28,11 @@
           </li>
           {% endif %}  
           {% if current_user.is_authenticated %}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="TokenDropdown">Buy Tokens</a>
-            <div class="dropdown-menu" aria-labelledby="tokenDropdown">
-              <form class="px 4 y 3" action="{{ url_for('main.buy_tokens')}}" method="POST">
-                {% if form %}
-                    {{form.hidden_tag() }}
-                {% endif %}
-                <div class="mb-3">
-                  <label for="num_tokens" class="form-label">Number of Tokens</label>
-                  <input type="number" class="form-control" id="num_tokens" name="num_tokens" placeholder="Enter the number of tokens to buy">
-                </div>
-                <!--Add stripe payment form-->
-                <button type="submit" class="btn btn-primary">Purchase</button>
-              </form>
-            </div>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('main.search_history') }}">Search History</a>
           </li>
           <li class="nav-item">
-            
+            <a class="nav-link" href="{{ url_for('main.buy_tokens')}}">Buy Tokens</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,10 +45,6 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('main.search_history') }}">Search History</a>
-          </li>
-          <li class="nav-item">
-            <span class="bi bi-person-fill {{ get_profile_css_class(current_user) }}"></span>
             <span class="nav-link">{{ current_user.tokens if current_user.tokens else 0}}</span>
           </li>
           {% endif %}
@@ -77,7 +61,7 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3+8/0vRzmJAAKwv5/0gMvv3AR3u2fg" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.12.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybBud7M4f6J3lSHE8G5vz5w3cqedwDwK8TZ4l5t2SRfJjE0Ez" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.4.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3+8/0vRzmJAAKwv5/0gMvv3AR3u2fg" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
   </body>
 </html>
