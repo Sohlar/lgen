@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, HiddenField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, HiddenField, SelectField
 from wtforms.validators import DataRequired, NumberRange, Email, EqualTo, ValidationError
 from app.main.models import User
 
@@ -31,3 +31,13 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Please use a different email address.')
         
+class SearchForm(FlaskForm):
+    query = StringField('Query', validators=[DataRequired()])
+    engine = SelectField('Engine', choices=[('engine1', 'Engine 1'), ('engine2', 'Engine 2')], validators=[DataRequired()])
+    desired_results = IntegerField('Desired Results', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+class AddTokensForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    tokens = IntegerField('Tokens', validators=[DataRequired()])
+    submit = SubmitField('Add Tokens')

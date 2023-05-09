@@ -11,7 +11,6 @@
                     <th scope="col">Query</th>
                     <th scope="col">Engine</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Results</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,6 +24,11 @@
                             <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#results_{{ history_item.id }}" aria-expanded="false" aria-controls="results_{{ history_item.id }}">
                                 Show Results
                             </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" type="button">
+                                Download CSV
+                            </button> 
                         </td>
                     </tr>
                     <tr>
@@ -43,11 +47,35 @@
                                             </thead>
                                             <tbody>
                                                 {% for result in results %}
-                                                    <tr>
-                                                        <td>{{ result.email }}</td>
-                                                        <td>{{ result.phone }}</td>
-                                                        <td>{{ result.url }}</td>
-                                                    </tr>
+                                                <tr>
+                                                    <td>
+                                                        {% if result.contact_info %}
+                                                            {% set unique_emails = [] %}
+                                                            {% for email in result.contact_info.emails %}
+                                                                {% if email.email not in unique_emails %}
+                                                                    {{ email.email }}{% if not loop.last %}, {% endif %}
+                                                                    {% set unique_emails = unique_emails + [email.email] %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            N/A
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if result.contact_info %}
+                                                            {% set unique_phones = [] %}
+                                                            {% for phone in result.contact_info.phones %}
+                                                                {% if phone.phone not in unique_phones %}
+                                                                    {{ phone.phone }}{% if not loop.last %}, {% endif %}
+                                                                    {% set unique_phones = unique_phones + [phone.phone] %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            N/A
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ result.url }}</td>
+                                                </tr>
                                                 {% endfor %}
                                             </tbody>
                                         </table>

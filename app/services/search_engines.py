@@ -53,7 +53,7 @@ class SearchEngine(ABC):
             soup = BeautifulSoup(content, 'html.parser')
             content = soup.get_text()
 
-        content = self.preprocess_text(content)
+        content = self.preprocess_text(self=self, content=content)
 
         valid_numbers = []
         for match in phonenumbers.PhoneNumberMatcher(content, default_region):
@@ -64,13 +64,13 @@ class SearchEngine(ABC):
         return valid_numbers
 
     def _find_contact_info(self, url, params):
-        url_content = self.get_page_content(url, params)
+        url_content = self.get_page_content(self=self, url=url, params=params)
 
         if url_content is None:
             return ({'email': None, 'phone': None, 'url': url})
         
-        email = self.find_email_addresses(url_content)
-        phone = self.find_phone_numbers(url_content, is_html=True)
+        email = self.find_email_addresses(self=self, content=url_content)
+        phone = self.find_phone_numbers(self=self, content=url_content, is_html=True)
         return ({'email': email, 'phone': phone, 'url': url})
 
 class GoogleSearch(SearchEngine):
@@ -88,7 +88,7 @@ class GoogleSearch(SearchEngine):
             }
             response = requests.get(base_url, params=params)
             data = response.json()
-            url_results.extend(self._find_contact_info(item['link'], params) for item in data['items'])
+            url_results.extend(self._find_contact_info(self=self, url=item['link'], params=params) for item in data['items'])
         return url_results
 
 class BingSearch(SearchEngine):
@@ -109,7 +109,8 @@ class BingSearch(SearchEngine):
             data = response.json()
             #data['webPages']['value']['id']
             foo = data['webPages']
-            url_results.extend(self._find_contact_info(item['url'], params) for item in foo['value'])
+
+            url_results.extend(self._find_contact_info(self=self, url=item['url'], params=params) for item in foo['value'])
             time.sleep(1)
         return url_results
     

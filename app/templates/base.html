@@ -26,7 +26,12 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('main.register') }}">Register</a>
           </li>
-          {% endif %}  
+          {% endif %} 
+          {% if current_user.is_admin %} 
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('main.add_tokens') }}">Admin:Add Tokens</a>
+          </li>
+          {% endif %}
           {% if current_user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('main.search_history') }}">Search History</a>
@@ -39,9 +44,9 @@
                 Profile
             </a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                <a class="dropdown-item" href="{{ url_for('main.profile') }}">Profile</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{{ url_for('main.logout') }}">Logout</a>
+              <a class="dropdown-item" href="{{ url_for('main.profile') }}">Settings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{{ url_for('main.logout') }}">Logout</a>
             </div>
           </li>
           <li class="nav-item">
