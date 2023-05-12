@@ -33,8 +33,10 @@ class RegistrationForm(FlaskForm):
         
 class SearchForm(FlaskForm):
     query = StringField('Query', validators=[DataRequired()])
-    engine = SelectField('Engine', choices=[('engine1', 'Engine 1'), ('engine2', 'Engine 2')], validators=[DataRequired()])
-    desired_results = IntegerField('Desired Results', validators=[DataRequired()])
+    #engine = SelectField('Engine', choices=[('engine1', 'Engine 1'), ('engine2', 'Engine 2')], validators=[DataRequired()])
+    desired_results = SelectField('Desired Results',
+                                  choices=[(str(i), str(i)) for i in range(5, 101, 5)],
+                                    validators=[DataRequired()])
     submit = SubmitField('Search')
 
 class AddTokensForm(FlaskForm):

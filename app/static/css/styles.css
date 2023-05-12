@@ -1,0 +1,95 @@
+/* styles.css */
+
+/* Global styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #343a40;
+    color: #f8f9fa;
+    line-height: 1.6;
+  }
+  
+  /* Navbar */
+  .navbar {
+    background-color: transparent;
+  }
+  
+  .navbar .navbar-brand {
+    color: #f8f9fa;
+  }
+  
+  .navbar .navbar-nav .nav-link {
+    color: #f8f9fa;
+  }
+  
+  .navbar .navbar-nav .nav-link:hover {
+    color: #bbbbbb;
+  }
+  
+  .navbar .navbar-nav .dropdown-item {
+    color: #f8f9fa;
+  }
+  
+  .navbar .navbar-nav .dropdown-item:hover {
+    background-color: #495057;
+    color: #f8f9fa;
+  }
+  
+  .navbar .navbar-nav .nav-link .nav-item span {
+    color: #f8f9fa;
+    margin-left: 5px;
+  }
+  
+  /* Container */
+  .container {
+    margin-top: 40px;
+  }
+  
+  /* Alerts */
+  .alert {
+    margin-top: 20px;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+  }
+  
+  /* Dropdown */
+  .dropdown-menu {
+    background-color: #343a40;
+    border-radius: 0;
+  }
+  
+  /* Keyframes for animations */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  
+  /* styles.css */
+
+/* Additions */
+
+/* Video background */
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -1;
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* End of additions */
+
+/* Other styles */
+/* ... */

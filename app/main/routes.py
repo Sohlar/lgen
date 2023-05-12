@@ -24,6 +24,8 @@ def index():
     
     if form.validate_on_submit():
         my_query = form.query.data
+        
+        # Currently only using Bing, but will combine all search together concurrent
         my_engine = 'bing'
         desired_results = form.desired_results.data
 

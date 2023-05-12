@@ -1,0 +1,30 @@
+/* index_styles.css */
+
+/* Form container */
+.container.mt-4 {
+    position: relative;
+    padding: 30px;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #f5f4f4, #363636, 0.5);
+    background-color: transparent;
+    overflow: hidden;
+  }
+  
+  /* Form element animations */
+  .form-control {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .form-control:focus {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Submit button */
+  .btn {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .btn:hover {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+  

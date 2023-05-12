@@ -107,7 +107,6 @@ class BingSearch(SearchEngine):
             }
             response = requests.get(base_url, headers=headers, params=params)
             data = response.json()
-            #data['webPages']['value']['id']
             foo = data['webPages']
 
             url_results.extend(self._find_contact_info(self=self, url=item['url'], params=params) for item in foo['value'])
