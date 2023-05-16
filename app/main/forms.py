@@ -35,9 +35,9 @@ class SearchForm(FlaskForm):
     query = StringField('Query', validators=[DataRequired()])
     #engine = SelectField('Engine', choices=[('engine1', 'Engine 1'), ('engine2', 'Engine 2')], validators=[DataRequired()])
     desired_results = SelectField('Desired Results',
-                                  choices=[(str(i), str(i)) for i in range(5, 101, 5)],
+                                  choices=[(int(i), int(i)) for i in range(5, 101, 5)],
                                     validators=[DataRequired()])
-    Location = StringField('Location', validators=[DataRequired()], default=None)
+    location = StringField('Location', validators=[DataRequired()], default=None)
     radius = IntegerField('Radius', validators=[DataRequired()], default=None)
     submit = SubmitField('Search')
 

@@ -25,16 +25,16 @@ def index():
     if form.validate_on_submit():
         my_query = f"{form.query.data}" 
         if form.location.data:
-            my_query.append(f" {form.location.data}")
+            my_query += (f" {form.location.data}")
         if form.radius.data:
-            my_query.append(f" within {form.radius.data}")
+            my_query += (f" within {form.radius.data} miles")
           
         # Currently only using Bing, but will combine all search together concurrent
-        my_engine = 'bing'
+        my_engine = 'google'
         desired_results = form.desired_results.data
 
         #calculate the cost of the search
-        cost = TOKENS_PER_RESULT * desired_results
+        cost = TOKENS_PER_RESULT * int(desired_results)
 
         if not current_user.is_authenticated:
             return redirect(url_for('main.register'))
