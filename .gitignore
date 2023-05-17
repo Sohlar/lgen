@@ -4,3 +4,6 @@ flaskenv
 *.env
 env
 migrations
+app/app.db
+app/app.db
+*.db

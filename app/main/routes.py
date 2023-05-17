@@ -54,8 +54,8 @@ def index():
                 search_engine = SearchEngineFactory().create_search_engine(my_engine)
                 # Perform the search and record the results
                 results = search_engine.search(self=search_engine, query=my_query, num_urls = cost)
-                for result in results:
-
+                for i, result in enumerate(results):
+                    flash(f'{i}')
                     if (result['email'] is None or not result['email']) and (result['phone'] is None or not result['phone']):
                         pass
                     else:
@@ -143,12 +143,7 @@ def buy_tokens():
         success = False
         try:
             #Create a stripe charge for the token purchase
-            charge = stripe.Charge.create(
-                amount=num_tokens,
-                currency='usd',
-                source=form.stripe_token.data,
-                description=f'Token purchase for {current_user.username}'
-            )
+            create_stripe_charge(num_tokens, form.stripe_token.data, user.username)
 
             #Update user's token balance
             current_user.tokens += form.num_tokens.data
@@ -166,6 +161,17 @@ def buy_tokens():
             db.session.commit()
             return jsonify({'status': 'error', 'message': 'Success'})
     return render_template('buy_tokens.html', title='Buy Tokens', form=form)
+
+
+
+def create_stripe_charge(amount, token, username):
+    stripe.Charge.create(
+        amount=amount,
+        currency='usd',
+        source=token,
+        description=f'Token purchase for {username}'
+    )
+
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
