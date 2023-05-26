@@ -54,8 +54,7 @@ def index():
                 search_engine = SearchEngineFactory().create_search_engine(my_engine)
                 # Perform the search and record the results
                 results = search_engine.search(self=search_engine, query=my_query, num_urls = cost)
-                for i, result in enumerate(results):
-                    flash(f'{i}')
+                for result in results:
                     if (result['email'] is None or not result['email']) and (result['phone'] is None or not result['phone']):
                         pass
                     else:
