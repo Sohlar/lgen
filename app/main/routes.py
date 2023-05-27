@@ -81,7 +81,7 @@ def index():
                 flash('Not enough tokens. Please purchase more tokens to continue.')
 
     #Process the results and render them in the template
-    return render_template('index.html', title='Home', form=form, results=results)
+    return render_template('index2.html', title='Home', form=form)
 
 @main_bp.route('/search_history', methods=['GET'])
 @login_required
