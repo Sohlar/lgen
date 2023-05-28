@@ -12,7 +12,21 @@
                         <h1 class="mb-5">Harness AI to drive superior lead generation!</h1>
                         <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_page.css') }}">
                         <div class="container mt-4">
+                            {% if current_user.is_authenticated %}
                             <form action="{{ url_for('main.index') }}" method="POST">
+                                {{ form.csrf_token }}
+                                
+                                <div class='row g-4'>
+                                    <div class="col-md-2">
+                                        {{ form.email.label(for='email', class='form-label') }}
+                                        {{ form.email(class='form-control', id='email', placeholder='Enter your search query') }}
+                                    </div>
+                                </div>
+                                {{ form.submit(class='btn btn-primary') }}
+                            </form>
+                            {% endif %}
+                            {% if not current_user.is_authenticated %}
+                            <form action="{{ url_for('main.index2') }}" method="POST">
                                 {{ form.csrf_token }}
                                 <div class='row g-4'>
                                     <div class="col-md-2">
@@ -34,6 +48,7 @@
                                 </div>
                                 {{ form.submit(class='btn btn-primary') }}
                             </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

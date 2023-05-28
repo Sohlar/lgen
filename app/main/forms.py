@@ -35,7 +35,7 @@ class SearchForm(FlaskForm):
     query = StringField('Query', validators=[DataRequired()])
     #engine = SelectField('Engine', choices=[('engine1', 'Engine 1'), ('engine2', 'Engine 2')], validators=[DataRequired()])
     desired_results = SelectField('Desired Results',
-                                  choices=[(int(i), int(i)) for i in range(5, 101, 5)],
+                                  choices=[(int(i), int(i)) for i in range(1, 1000, 50)],
                                     validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired()], default=None)
     radius = IntegerField('Radius', validators=[DataRequired()], default=None)
@@ -45,3 +45,7 @@ class AddTokensForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     tokens = IntegerField('Tokens', validators=[DataRequired()])
     submit = SubmitField('Add Tokens')
+
+class CallToActionForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Register')
