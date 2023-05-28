@@ -12,7 +12,7 @@ from .helpers import get_profile_css_class
 from datetime import datetime
 import time
 
-import stripe
+#import stripe
 TOKENS_PER_RESULT = 1
 
 
