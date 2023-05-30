@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, jsonify, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from app.main import main_bp
-from app.main.forms import LoginForm, TokenPurchaseForm, RegistrationForm
+from app.main.forms import LoginForm, TokenPurchaseForm, RegistrationForm, CallToActionForm
 from app.main.models import User, SearchHistory, SearchResult, ContactInfo, Email, Phone
 from app import db
 from app.services.search_engines import GoogleSearch, BingSearch
@@ -15,27 +15,23 @@ import time
 import stripe
 TOKENS_PER_RESULT = 1
 
-
 @main_bp.route('/')
 @main_bp.route('/index', methods=['GET', 'POST'])
 def index():
+
     form = SearchForm()
     results = []
-    
     if form.validate_on_submit():
         my_query = f"{form.query.data}" 
         if form.location.data:
             my_query += (f" {form.location.data}")
         if form.radius.data:
             my_query += (f" within {form.radius.data} miles")
-          
         # Currently only using Bing, but will combine all search together concurrent
         my_engine = 'google'
         desired_results = form.desired_results.data
-
         #calculate the cost of the search
         cost = TOKENS_PER_RESULT * int(desired_results)
-
         if not current_user.is_authenticated:
             return redirect(url_for('main.register'))
         if current_user.is_authenticated and current_user.tokens is not None:
@@ -44,12 +40,10 @@ def index():
             if current_user.tokens >= cost:
                 print('User has enough Tokens \n')
                 current_user.tokens -= cost
-
                 # Save search history
                 search_history = SearchHistory(user_id=current_user.id, query=my_query, engine=my_engine, timestamp=datetime.utcnow())
                 db.session.add(search_history)
                 db.session.commit()
-
                 # Create a search engine using the factory
                 search_engine = SearchEngineFactory().create_search_engine(my_engine)
                 # Perform the search and record the results
@@ -60,26 +54,21 @@ def index():
                     else:
                         emails = result['email'] 
                         phones = result['phone'] 
-                        
                         search_result = SearchResult(search_history_id=search_history.id, url=result['url'])
                         db.session.add(search_result)
                         db.session.flush()
-
                         contact_info = ContactInfo(search_result_id=search_result.id)
                         db.session.add(contact_info)
                         db.session.flush()
-
                         for email_addr in emails:
                             email = Email(contact_info_id=contact_info.id, email=email_addr)
                             db.session.add(email)
-                        
                         for phone_addr in phones:
                             phone = Phone(contact_info_id=contact_info.id, phone=phone_addr)
                             db.session.add(phone)
                 db.session.commit()
             else:
                 flash('Not enough tokens. Please purchase more tokens to continue.')
-
     #Process the results and render them in the template
     return render_template('index2.html', title='Home', form=form)
 
