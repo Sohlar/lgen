@@ -8,7 +8,7 @@ import time
 from abc import ABC, abstractmethod
 
 # Import API keys from config.py
-from .config import GOOG_API_KEY, GOOGLE_CX, BING_API_KEY
+from .config import GOOG_API_KEY, GOOGLE_CX
 
 class SearchEngine(ABC):
     

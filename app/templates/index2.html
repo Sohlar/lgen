@@ -11,6 +11,7 @@
                         <!-- Page heading-->
                         <h1 class="mb-5">Harness AI to drive superior lead generation!</h1>
                         <!--<link rel="stylesheet" href="styles2.css">-->
+                        <link rel="stylesheet" href="{{ url_for('static', filename='static/css/landing_page.css') }}">
                         <div class="container mt-4">
                             {% if not current_user.is_authenticated %}
                             <div class="col-auto"><button class="btn btn-primary btn-lg" id="submitButton" type="submit">Signup</button></div>
