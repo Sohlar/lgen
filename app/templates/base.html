@@ -20,36 +20,36 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="../static/css/styles2.css" rel="stylesheet" /> 
    
-    <title>{% block title %}Default Title{% endblock %}</title>
+    <title>{% block title %}DataBox{% endblock %}</title>
   </head>
   <body>
     <div class="content-wrapper">
-      <nav class="navbar navbar-expand-lg">
+      <nav class="navbar navbar-expand-lg bg-dark">
         <div class="container">
-          <a class="navbar-brand" href="{{ url_for('main.index') }}">LeadFinder</a>
+          <a class="navbar-brand text-white" href="{{ url_for('main.index') }}">DataBox</a>
           <ul class="navbar-nav ml-auto">
             {% if not current_user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('main.login') }}">Login</a>
+                <a class="nav-link text-white" href="{{ url_for('main.login') }}">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.register') }}">Register</a>
+              <a class="nav-link text-white" href="{{ url_for('main.register') }}">Register</a>
             </li>
             {% endif %} 
             {% if current_user.is_admin %} 
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.add_tokens') }}">Admin:Add Tokens</a>
+              <a class="nav-link text-white" href="{{ url_for('main.add_tokens') }}">Admin:Add Tokens</a>
             </li>
             {% endif %}
             {% if current_user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.search_history') }}">Search History</a>
+              <a class="nav-link text-white" href="{{ url_for('main.search_history') }}">Search History</a>
             </li>
-            <!--
+            
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.buy_tokens')}}">Buy Tokens</a>
+              <a class="nav-link text-white" href="{{ url_for('main.buy_tokens')}}">Buy Tokens</a>
             </li> 
-            -->
+            
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Profile
