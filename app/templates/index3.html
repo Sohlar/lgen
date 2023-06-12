@@ -27,22 +27,25 @@
     </div>
     {% endif %}
     {% if current_user.is_authenticated %}
+<!--     <div class="cols cols0">
+        <h1>We are <span class="multiText">Lead Generation</span></h1>
+    </div>   -->
     <form action="{{ url_for('main.index') }}" method="POST">
         {{ form.csrf_token }}
         <div class='row g-4'>
-            <div class="col-md-3">
+            <div class="col-md-3 cols0">
                 {{ form.query.label(for='query', class='form-label text-white') }}
                 {{ form.query(class='form-control', id='query', placeholder='') }}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 cols0">
                 {{ form.desired_results.label(for='desired_results', class='form-label text-white') }}
                 {{ form.desired_results(class='form-control', id='desired_results', placeholder='10', min='10') }}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 cols0">
                 {{ form.location.label(for='location', class='form-label text-white') }}
                 {{ form.location(class='form-control', id='location', placeholder='') }}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 cols0">
                 {{ form.radius.label(for='radius', class='form-label text-white') }}
                 {{ form.radius(class='form-control', id='radius', placeholder='', min='10', max ='1000') }}
             </div>
@@ -74,7 +77,7 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="features-icons-item mx-auto mb-0 mb-lg-3">
-                        <div class="features-icons-icon d-flex"><i class="bi-terminal m-auto text-primary"></i></div>
+                        <div class="features-icons-icon d-flex"><i class="bi-terminal color-red m-auto text-primary"></i></div>
                         <h3>Proven Results</h3>
                         <p class="lead mb-0">Experience higher conversion rates and improved ROI with our advanced AI system!</p>
                     </div>

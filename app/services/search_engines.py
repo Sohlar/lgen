@@ -8,7 +8,10 @@ import time
 from abc import ABC, abstractmethod
 
 # Import API keys from config.py
-from .config import GOOG_API_KEY, GOOGLE_CX
+#from .config import GOOG_API_KEY, GOOGLE_CX
+GOOGLE_API_KEY = "AIzaSyBiCkYaoc669PNUOG7we_3sYXqsMOFePjo"
+#GOOG_API_KEY = 'AIzaSyDg8CrXndtVBqzpkwEKqwTFm2IkCqVvYUo'
+GOOGLE_CX = '85905c2b5e8aa405b'
 
 class SearchEngine(ABC):
     
@@ -75,21 +78,27 @@ class SearchEngine(ABC):
 
 class GoogleSearch(SearchEngine):
 
-    def search(self, query, start_index=1, num_urls=9):
+    def search(self, query, start_index=0, num_urls=9):
         url_results = []
-        for start_index in range(1, num_urls,1):    
+        for start in range(start_index, num_urls,9):    
             base_url = 'https://www.googleapis.com/customsearch/v1'
             params = {
-                'key': GOOG_API_KEY,
+                'key': GOOGLE_API_KEY,
                 'cx': GOOGLE_CX,
                 'q': query,
-                'start': start_index,
+                'start': start,
                 'num': num_urls
             }
-            response = requests.get(base_url, params=params)
+            
+            response = requests.get(url=base_url, params=params)
             data = response.json()
             print(data)
-            url_results.extend(self._find_contact_info(self=self, url=item['link'], params=params) for item in data['items'])
+            if 'items' in data:
+                print(data)
+                url_results.extend(self._find_contact_info(self=self, url=item['link'], params=params) for item in data['items'])
+            else:
+                print("No Items in the Response")
+                print(data)
         return url_results
 
 class BingSearch(SearchEngine):

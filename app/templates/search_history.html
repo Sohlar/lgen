@@ -1,7 +1,7 @@
 {% extends 'base2.html' %}
 
 {% block content %}
-    <h1 class="mt-4">Search History</h1>
+    <h1 class="mt-4 page-heading">Search History</h1>
 
     {% if search_history %}
         <table class="table table-striped mt-4">
@@ -27,6 +27,11 @@
                         <td>
                             <button class="btn btn-primary" type="button">
                                 Download CSV
+                            </button> 
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" type="button">
+                                Email
                             </button> 
                         </td>
                     </tr>

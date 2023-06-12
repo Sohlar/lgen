@@ -6,11 +6,11 @@
   <h1>Buy Tokens</h1>
   <form action="{{ url_for('main.buy_tokens')}}" method="POST" id="payment-form">
     {{form.hidden_tag() }}
-    <div class="mb-3">
+    <div class="col-md-3">
       {{ form.num_tokens.label(class="form-label") }}
       {{ form.num_tokens(class="form-control") }}
     </div>
-    <div class="mb-3">
+    <div class="col-md-3">
       <label for="card-element" class="form-label">Credit or Debit Card</label>
       <div id="card-element" class="form-control">
         <!-- A Stripe Element will be inserted here. -->
@@ -18,7 +18,7 @@
       <!-- Used to display form errors. -->
       <div id="card-errors" role="alert" class="text-danger mt-2"></div>
     </div>
-    <button type="submit" class="btn btn-primary">Purchase</button>
+    <button type="submit" class="col-md-3 btn-primary">Purchase</button>
   </form>
 
   <script src="https://js.stripe.com/v3/"></script>

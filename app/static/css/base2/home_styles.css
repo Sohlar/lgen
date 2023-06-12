@@ -73,7 +73,7 @@ b{
     height: 100vh;
     justify-content: center;
     align-items: center;
-    padding: 0 10%;
+    padding: 0;
     overflow: hidden;
 }
 .wrapper::before{
@@ -259,4 +259,5 @@ button{
 button:hover{
     background-color:#7f00ff;
 }
+
 
