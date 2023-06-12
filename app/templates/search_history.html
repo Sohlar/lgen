@@ -1,26 +1,24 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 
 {% block content %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/search_history.css') }}">
     <h1 class="mt-4">Search History</h1>
 
     {% if search_history %}
         <table class="table table-striped mt-4">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Query</th>
-                    <th scope="col">Engine</th>
-                    <th scope="col">Date</th>
+                    <th class="text-white" scope="col">#</th>
+                    <th class="text-white" scope="col">Query</th>
+                    <th class="text-white" scope="col">Date</th>
                 </tr>
             </thead>
             <tbody>
                 {% for history_item in search_history %}
                     <tr>
-                        <th scope="row">{{ loop.index }}</th>
-                        <td>{{ history_item.query }}</td>
-                        <td>{{ history_item.engine }}</td>
-                        <td>{{ history_item.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <th class="text-white" scope="row">{{ loop.index }}</th>
+                        <td class="text-white">{{ history_item.query }}</td>
+                        <!-- <td>{{ history_item.engine }}</td> -->
+                        <td class="text-white">{{ history_item.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                         <td>
                             <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#results_{{ history_item.id }}" aria-expanded="false" aria-controls="results_{{ history_item.id }}">
                                 Show Results

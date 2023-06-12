@@ -75,9 +75,9 @@ class SearchEngine(ABC):
 
 class GoogleSearch(SearchEngine):
 
-    def search(self, query, start_index=10, num_urls=10):
+    def search(self, query, start_index=1, num_urls=9):
         url_results = []
-        for start_index in range(1, num_urls,10):    
+        for start_index in range(1, num_urls,1):    
             base_url = 'https://www.googleapis.com/customsearch/v1'
             params = {
                 'key': GOOG_API_KEY,
@@ -88,6 +88,7 @@ class GoogleSearch(SearchEngine):
             }
             response = requests.get(base_url, params=params)
             data = response.json()
+            print(data)
             url_results.extend(self._find_contact_info(self=self, url=item['link'], params=params) for item in data['items'])
         return url_results
 

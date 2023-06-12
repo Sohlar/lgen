@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 
 {% block title %}Login - Contact Info Finder{% endblock %}
 
@@ -32,7 +32,9 @@
               {{ form.remember_me(class="form-check-input") }}
               {{ form.remember_me.label(class="form-check-label") }}
             </div>
-            {{ form.submit(class="btn btn-primary mt-2") }}
+            <div class="form-actions">
+              {{ form.submit(class="btn btn-check-submit") }}
+            </div>
           </form>
           <p>Don't have an account? <a href="{{ url_for('main.register') }}">Register</a></p>
         </div>
