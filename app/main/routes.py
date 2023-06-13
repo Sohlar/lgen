@@ -10,9 +10,10 @@ from app.services.utils import search_and_record, drop_non_results
 from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm
 from .helpers import get_profile_css_class
 from datetime import datetime
+from flask_mail import Mail, Message
 import time
 
-#import stripe
+import stripe
 TOKENS_PER_RESULT = 1
 
 @main_bp.route('/')
@@ -201,3 +202,12 @@ def add_tokens():
             flash('User not found', 'danger')
         return redirect(url_for('main.add_tokens'))
     return render_template('add_tokens.html', form=form)
+
+@main_bp.route('/send_mail', methods=["POST"])
+def mail_results():
+    history_id = request.form.get('history_id')
+    # ... fetch the search result based on history_id ...
+    msg = Message("Search Result", recipients=["recipient@example.com"])  # recipient's email
+    msg.body = "Here is your search result: \n" + str(history_id)
+    Mail.send(msg)
+    return 'Email sent!'

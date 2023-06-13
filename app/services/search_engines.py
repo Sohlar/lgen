@@ -94,11 +94,9 @@ class GoogleSearch(SearchEngine):
             data = response.json()
             print(data)
             if 'items' in data:
-                print(data)
                 url_results.extend(self._find_contact_info(self=self, url=item['link'], params=params) for item in data['items'])
             else:
                 print("No Items in the Response")
-                print(data)
         return url_results
 
 class BingSearch(SearchEngine):
