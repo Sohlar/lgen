@@ -10,7 +10,7 @@ from app.services.utils import search_and_record, drop_non_results
 from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm
 from .helpers import get_profile_css_class
 from datetime import datetime
-from flask_mail import Mail, Message
+""" from flaskmail import Mail, Message """
 import time
 
 import stripe
