@@ -3,10 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GOOG_API_KEY = 'AIzaSyDg8CrXndtVBqzpkwEKqwTFm2IkCqVvYUo'
-GOOGLE_CX = '85905c2b5e8aa405b'
-
-""" GOOG_API_KEY = os.environ.get("GOOG_API_KEY")
+GOOG_API_KEY = os.environ.get("GOOG_API_KEY")
 if not GOOG_API_KEY:
     raise ValueError('GOOG_API_KEY environment variable not set')
 
@@ -16,12 +13,13 @@ if not GOOGLE_CX:
 
 BING_API_KEY = os.environ.get("BING_API_KEY")
 if not BING_API_KEY:
-    raise ValueError('BING_API_KEY environment variable not set') """
+    raise ValueError('BING_API_KEY environment variable not set') 
 
-""" STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
+""" 
+STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
 if not STRIPE_API_KEY:
-    raise ValueError('STRIPE_API_KEY environment variable not set') """
-'''
+    raise ValueError('STRIPE_API_KEY environment variable not set')
+
 EBAY_API_KEY = os.environ.get("EBAY_API_KEY")
 if not EBAY_API_KEY:
     raise ValueError('EBAY_API_KEY environment variable not set')
@@ -31,4 +29,4 @@ if not GMAPS_API_KEY:
     raise ValueError('GMAPS_API_KEY environment variable not set')
 
 EBAY_APP_ID = 'YOUR_EBAY_APP_ID'
-'''
+"""

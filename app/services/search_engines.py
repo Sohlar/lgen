@@ -8,10 +8,7 @@ import time
 from abc import ABC, abstractmethod
 
 # Import API keys from config.py
-#from .config import GOOG_API_KEY, GOOGLE_CX
-GOOGLE_API_KEY = "AIzaSyBiCkYaoc669PNUOG7we_3sYXqsMOFePjo"
-#GOOG_API_KEY = 'AIzaSyDg8CrXndtVBqzpkwEKqwTFm2IkCqVvYUo'
-GOOGLE_CX = '85905c2b5e8aa405b'
+from .config import GOOG_API_KEY, GOOGLE_CX
 
 class SearchEngine(ABC):
     
@@ -83,7 +80,7 @@ class GoogleSearch(SearchEngine):
         for start in range(start_index, num_urls,9):    
             base_url = 'https://www.googleapis.com/customsearch/v1'
             params = {
-                'key': GOOGLE_API_KEY,
+                'key': GOOG_API_KEY,
                 'cx': GOOGLE_CX,
                 'q': query,
                 'start': start,
