@@ -24,13 +24,13 @@
                                 Show Results
                             </button>
                         </td>
-                        <td>
-                            <button class="btn btn-primary" type="button">
+<!--                         <td>
+                            <button class="btn btn-primary" type="button" href="{{ url_for('services.utils', history_item=history_item.id) }}">
                                 Download CSV
                             </button> 
-                        </td>
+                        </td> -->
                         <td>
-                            <button class="btn btn-primary" type="button">
+                            <button class="btn btn-primary" type="button" href="{{ url_for('services.email_service')}}">
                                 Email
                             </button> 
                         </td>

@@ -5,16 +5,20 @@ from app.config import Config
 from flask_migrate import Migrate
 from flask_talisman import Talisman
 from celery import Celery
+import os
+
+CELERY_BROKER_URL = os.environ.get('REDIS_TLS_URL')
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_TLS_URL')
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 celery = Celery()
 
 def create_app(config_class=Config):
+    print(os.environ.get('DATABASE_URL'))
     app = Flask(__name__)
     app.config.from_object(config_class)
     talisman = Talisman(app)
-    
 
     db.init_app(app)
     login_manager.init_app(app)

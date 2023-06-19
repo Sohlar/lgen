@@ -3,14 +3,14 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app.main import main_bp
 from app.main.forms import LoginForm, TokenPurchaseForm, RegistrationForm, CallToActionForm
 from app.main.models import User, SearchHistory, SearchResult, ContactInfo, Email, Phone
-from app import db
+from app import db, celery
 from app.services.search_engines import GoogleSearch, BingSearch
 from app.services.search_engine_factory import SearchEngineFactory
 from app.services.utils import search_and_record, drop_non_results
 from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm
 from .helpers import get_profile_css_class
 from datetime import datetime
-""" from flaskmail import Mail, Message """
+from flask_mail import Mail, Message 
 import time
 
 import stripe
@@ -19,7 +19,6 @@ TOKENS_PER_RESULT = 1
 @main_bp.route('/')
 @main_bp.route('/index', methods=['GET', 'POST'])
 def index():
-
     form = SearchForm()
     results = []
     if form.validate_on_submit():
@@ -48,30 +47,36 @@ def index():
                 # Create a search engine using the factory
                 search_engine = SearchEngineFactory().create_search_engine(my_engine)
                 # Perform the search and record the results
-                results = search_engine.search(self=search_engine, query=my_query, num_urls = cost)
-                for result in results:
-                    if (result['email'] is None or not result['email']) and (result['phone'] is None or not result['phone']):
-                        pass
-                    else:
-                        emails = result['email'] 
-                        phones = result['phone'] 
-                        search_result = SearchResult(search_history_id=search_history.id, url=result['url'])
-                        db.session.add(search_result)
-                        db.session.flush()
-                        contact_info = ContactInfo(search_result_id=search_result.id)
-                        db.session.add(contact_info)
-                        db.session.flush()
-                        for email_addr in emails:
-                            email = Email(contact_info_id=contact_info.id, email=email_addr)
-                            db.session.add(email)
-                        for phone_addr in phones:
-                            phone = Phone(contact_info_id=contact_info.id, phone=phone_addr)
-                            db.session.add(phone)
-                db.session.commit()
+
+                search_engine_task.delay(search_engine, search_history.id, my_query, cost)
+                flash('Search request enqueued! Please check back later for the results.', 'info')
             else:
                 flash('Not enough tokens. Please purchase more tokens to continue.')
-    #Process the results and render them in the template
     return render_template('index3.html', title='Home', form=form)
+
+
+@celery.task(name="main.search_engine_task")
+def search_engine_task(search_engine, search_history_id, query, cost):
+    results = search_engine.search(query=query, num_urls = cost)
+    for result in results:
+        if (result['email'] or result['phone']):
+            emails = result['email'] 
+            phones = result['phone'] 
+            search_result = SearchResult(search_history_id=search_history.id, url=result['url'])
+            db.session.add(search_result)
+            db.session.flush()
+            contact_info = ContactInfo(search_result_id=search_result.id)
+            db.session.add(contact_info)
+            db.session.flush()
+            for email_addr in emails:
+                email = Email(contact_info_id=contact_info.id, email=email_addr)
+                db.session.add(email)
+            for phone_addr in phones:
+                phone = Phone(contact_info_id=contact_info.id, phone=phone_addr)
+                db.session.add(phone)
+    db.session.commit()
+                
+
 
 @main_bp.route('/search_history', methods=['GET'])
 @login_required
@@ -206,7 +211,6 @@ def add_tokens():
 @main_bp.route('/send_mail', methods=["POST"])
 def mail_results():
     history_id = request.form.get('history_id')
-    # ... fetch the search result based on history_id ...
     msg = Message("Search Result", recipients=["recipient@example.com"])  # recipient's email
     msg.body = "Here is your search result: \n" + str(history_id)
     Mail.send(msg)
