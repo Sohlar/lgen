@@ -19,13 +19,17 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     talisman = Talisman(app)
+    celery = make_celery(app)
 
     db.init_app(app)
     login_manager.init_app(app)
-    celery = make_celery(app)
+
+    with app.app_context():
+        db.create_all()
 
     from app.main import main_bp
     app.register_blueprint(main_bp)
+    
     migrate = Migrate(app, db)
 
     return app
