@@ -7,8 +7,6 @@ from flask_talisman import Talisman
 from celery import Celery
 import os
 
-CELERY_BROKER_URL = os.environ.get('REDIS_TLS_URL')
-CELERY_RESULT_BACKEND = os.environ.get('REDIS_TLS_URL')
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -29,7 +27,7 @@ def create_app(config_class=Config):
 
     from app.main import main_bp
     app.register_blueprint(main_bp)
-    
+
     migrate = Migrate(app, db)
 
     return app

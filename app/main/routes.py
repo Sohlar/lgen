@@ -4,7 +4,7 @@ from app.main import main_bp
 from app.main.forms import LoginForm, TokenPurchaseForm, RegistrationForm, CallToActionForm
 from app.main.models import User, SearchHistory, SearchResult, ContactInfo, Email, Phone
 from app import db, celery
-from app.services.search_engines import GoogleSearch, BingSearch
+from app.services.search_engines import GoogleSearch, BingSearch, search
 from app.services.search_engine_factory import SearchEngineFactory
 from app.services.utils import search_and_record, drop_non_results
 from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm
@@ -45,10 +45,9 @@ def index():
                 db.session.add(search_history)
                 db.session.commit()
                 # Create a search engine using the factory
-                search_engine = SearchEngineFactory().create_search_engine(my_engine)
+                #search_engine = SearchEngineFactory().create_search_engine(my_engine)
                 # Perform the search and record the results
-
-                search_engine_task.delay(search_engine, search_history.id, my_query, cost)
+                search_engine_task.delay(search_history.id, my_query, cost)
                 flash('Search request enqueued! Please check back later for the results.', 'info')
             else:
                 flash('Not enough tokens. Please purchase more tokens to continue.')
@@ -56,8 +55,8 @@ def index():
 
 
 @celery.task(name="main.search_engine_task")
-def search_engine_task(search_engine, search_history_id, query, cost):
-    results = search_engine.search(query=query, num_urls = cost)
+def search_engine_task( search_history_id, query, cost):
+    results = search(query=query, num_urls = cost)
     for result in results:
         if (result['email'] or result['phone']):
             emails = result['email'] 

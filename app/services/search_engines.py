@@ -73,6 +73,28 @@ class SearchEngine(ABC):
         phone = self.find_phone_numbers(self=self, content=url_content, is_html=True)
         return ({'email': email, 'phone': phone, 'url': url})
 
+
+def search(query, start_index=0, num_urls=9):
+    url_results = []
+    for start in range(start_index, num_urls,9):    
+        base_url = 'https://www.googleapis.com/customsearch/v1'
+        params = {
+            'key': GOOG_API_KEY,
+            'cx': GOOGLE_CX,
+            'q': query,
+            'start': start,
+            'num': num_urls
+        }
+        
+        response = requests.get(url=base_url, params=params)
+        data = response.json()
+        print(data)
+        if 'items' in data:
+            url_results.extend(self._find_contact_info(self=self, url=item['link'], params=params) for item in data['items'])
+        else:
+            print("No Items in the Response")
+    return url_results
+
 class GoogleSearch(SearchEngine):
 
     def search(self, query, start_index=0, num_urls=9):
