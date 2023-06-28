@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from flask_talisman import Talisman
 from celery import Celery
 import os
+from urllib.parse import quote_plus
 
 
 db = SQLAlchemy()
@@ -33,11 +34,18 @@ def create_app(config_class=Config):
     return app
 
 def make_celery(app):
+
+    redis_url = app.config['CELERY_BROKER_URL']
+    ssl_cert_reqs = 'required'
+
+    redis_url += '?ssl_cert_reqs=' + quote_plus(ssl_cert_reqs)
     celery = Celery(
         app.import_name,
-        broker=app.config['CELERY_BROKER_URL'],
+        broker=redis_url, 
         backend=app.config['CELERY_RESULT_BACKEND']
     )
+    print(celery)
+
     celery.conf.update(app.config)
     TaskBase = celery.Task
 
