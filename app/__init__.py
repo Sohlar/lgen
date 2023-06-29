@@ -14,7 +14,7 @@ login_manager = LoginManager()
 celery = Celery()
 
 def create_app(config_class=Config):
-    global celery
+    print(os.environ.get('DATABASE_URL'))
     app = Flask(__name__)
     app.config.from_object(config_class)
     talisman = Talisman(app)

@@ -16,8 +16,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
     TESTING = False
-    CELERY_BROKER_URL = os.environ.get('REDIS_URL')
-    CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL')
+    CELERY_BROKER_URL = os.environ.get('REDIS_TLS_URL')
+    CELERY_RESULT_BACKEND = os.environ.get('REDIS_TLS_URL')
 """
 class DevelopmentConfig(Config):
     DEBUG = True
