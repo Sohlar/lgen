@@ -1,5 +1,0 @@
-<!--                         <td>
-                            <button class="btn btn-primary" type="button" href="{{ url_for('services.email_service')}}">
-                                Email
-                            </button> 
-                        </td> -->

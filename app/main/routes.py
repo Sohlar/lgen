@@ -12,6 +12,7 @@ from .helpers import get_profile_css_class
 from datetime import datetime
 from flask_mail import Mail, Message 
 import time
+from .tasks import search_engine_task
 
 import stripe
 TOKENS_PER_RESULT = 1
@@ -19,6 +20,25 @@ TOKENS_PER_RESULT = 1
 @main_bp.route('/')
 @main_bp.route('/index', methods=['GET', 'POST'])
 def index():
+    """
+    Handles requests for the application's home page.
+
+    A GET request returns the home page with a blank SearchForm.
+
+    A POST request (i.e., when the SearchForm is submitted) begins the process of a search request. 
+    This involves:
+    - Forming the search query based on form inputs.
+    - Calculating the cost of the search in tokens.
+    - Checking if the current user is authenticated. If not, they're redirected to the register page.
+    - If the user is authenticated, it checks if they have enough tokens for the search.
+        - If they don't, a flash message prompts them to purchase more tokens.
+        - If they do, tokens are deducted from their account, the search query is saved to their 
+          search history, and a search task is enqueued with Celery. The user is also notified that 
+          their search request is processing.
+
+    :return: The home page with either a blank or filled-in SearchForm, and possibly a flash message 
+             (if a search request was submitted).
+    """
     form = SearchForm()
     results = []
     if form.validate_on_submit():
@@ -52,30 +72,6 @@ def index():
             else:
                 flash('Not enough tokens. Please purchase more tokens to continue.')
     return render_template('index3.html', title='Home', form=form)
-
-
-@celery.task(name="main.search_engine_task")
-def search_engine_task(engine_str, search_history_id, query, cost):
-    results = SearchEngineFactory.create_search_engine(engine_str).search(query=query, num_urls = cost)
-    for result in results:
-        if (result['email'] or result['phone']):
-            emails = result['email'] 
-            phones = result['phone'] 
-            search_result = SearchResult(search_history_id=search_history.id, url=result['url'])
-            db.session.add(search_result)
-            db.session.flush()
-            contact_info = ContactInfo(search_result_id=search_result.id)
-            db.session.add(contact_info)
-            db.session.flush()
-            for email_addr in emails:
-                email = Email(contact_info_id=contact_info.id, email=email_addr)
-                db.session.add(email)
-            for phone_addr in phones:
-                phone = Phone(contact_info_id=contact_info.id, phone=phone_addr)
-                db.session.add(phone)
-    db.session.commit()
-                
-
 
 @main_bp.route('/search_history', methods=['GET'])
 @login_required
@@ -112,6 +108,7 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('main.login'))
     return render_template('register.html', title='Register', form=form)
+
 
 @main_bp.route('/buy_tokens', methods=['GET', 'POST'])
 @login_required
@@ -154,7 +151,6 @@ def buy_tokens():
             db.session.commit()
             return jsonify({'status': 'error', 'message': 'Success'})
     return render_template('buy_tokens.html', title='Buy Tokens', form=form)
-
 
 
 def create_stripe_charge(amount, token, username):

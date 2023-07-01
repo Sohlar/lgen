@@ -13,11 +13,11 @@ class Config:
     url = url._replace(scheme=url.scheme.replace('postgres', 'postgresql'))
     SQLALCHEMY_DATABASE_URI = urlunparse(url)
     #or \    f"sqlite:///{os.path.join(basedir, 'app.db')}"
+    CELERY = {'BROKER_URL': os.environ['REDIS_TLS_URL'],
+              'RESULT_BACKEND' : os.environ['REDIS_TLS_URL']}
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
     TESTING = False
-    CELERY_BROKER_URL = os.environ.get('REDIS_TLS_URL')
-    CELERY_RESULT_BACKEND = os.environ.get('REDIS_TLS_URL')
 """
 class DevelopmentConfig(Config):
     DEBUG = True
