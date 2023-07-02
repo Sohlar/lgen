@@ -7,16 +7,20 @@ from celery import Celery
 db = SQLAlchemy()
 login_manager = LoginManager()
 migrate = Migrate()
-
 csp = {
     'default-src': [
-        '\'self\'',
+        '\'self\''
+    ],
+    'script-src': [
         'cdnjs.cloudflare.com',
-        'cdn.jsdelivr.net',
-        'fonts.googleapis.com',
-        'code.jquery.com',
+        'cdn.jsdelivr.net'
+    ],
+    'style-src': [
+        'fonts.googleapis.com'
+        #'code.jquery.com'
     ]
 }
+
 
 talisman = Talisman(content_security_policy=csp)
 celery = Celery()
