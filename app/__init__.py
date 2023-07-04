@@ -2,7 +2,8 @@ from flask import Flask
 from app.config import Config
 import os
 from urllib.parse import quote_plus
-from .extensions import db, login_manager, migrate, talisman, celery
+from .extensions import db, login_manager, migrate, celery
+from flask_talisman import Talisman
 
 def create_app(config_class=Config):
     print(os.environ.get('DATABASE_URL'))
@@ -12,7 +13,35 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
-    talisman.init_app(app)
+
+    csp = {
+        'default-src': [
+            '\'self\''
+        ],
+        'script-src': [
+            '\'self\'',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+            'https://code.jquery.com',
+            'https://cdn.startbootstrap.com'  
+        ],
+        'style-src': [
+            '\'self\'',
+            'https://fonts.googleapis.com',
+            'https://code.jquery.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+            '\'unsafe-inline\''
+        ],
+        'font-src': [
+            '\'self\'',
+            'https://fonts.googleapis.com',
+            'https://fonts.gstatic.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net'
+        ]
+    }
+    talisman = Talisman(app, content_security_policy=csp)
 
     celery.conf.update(app.config['CELERY'])
 
