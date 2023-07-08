@@ -34,8 +34,8 @@ class RegistrationForm(FlaskForm):
 class SearchForm(FlaskForm):
     query = StringField('Query', validators=[DataRequired()])
     #engine = SelectField('Engine', choices=[('engine1', 'Engine 1'), ('engine2', 'Engine 2')], validators=[DataRequired()])
-    desired_results = SelectField('Desired Results',
-                                  choices=[(int(i), int(i)) for i in range(1, 1000, 5)],
+    desired_results = SelectField('Tokens',
+                                  choices=[(int(i), int(i)) for i in range(10, 100, 10)],
                                     validators=[DataRequired()])
     location = StringField('Location', validators=[DataRequired()], default=None)
     radius = IntegerField('Radius', validators=[DataRequired()], default=None)

@@ -24,6 +24,7 @@ class SearchEngine(ABC):
             else:
                 print(f"Error: {response.status_code}")
                 print(f"Reason: {response.reason}")
+                #print(f"Reason: {response.text}")
                 return None
         except Exception as e:
             print(f"Error: {e}")
@@ -53,7 +54,7 @@ class SearchEngine(ABC):
             soup = BeautifulSoup(content, 'html.parser')
             content = soup.get_text()
 
-        content = self.preprocess_text(self=self, content=content)
+        content = self.preprocess_text(content=content)
 
         valid_numbers = []
         for match in phonenumbers.PhoneNumberMatcher(content, default_region):
@@ -64,13 +65,13 @@ class SearchEngine(ABC):
         return valid_numbers
 
     def _find_contact_info(self, url, params):
-        url_content = self.get_page_content(self=self, url=url, params=params)
+        url_content = self.get_page_content(url=url, params=params)
 
         if url_content is None:
             return ({'email': None, 'phone': None, 'url': url})
         
-        email = self.find_email_addresses(self=self, content=url_content)
-        phone = self.find_phone_numbers(self=self, content=url_content, is_html=True)
+        email = self.find_email_addresses(content=url_content)
+        phone = self.find_phone_numbers(content=url_content, is_html=True)
         return ({'email': email, 'phone': phone, 'url': url})
 
 
@@ -85,76 +86,15 @@ class GoogleSearch(SearchEngine):
                 'cx': GOOGLE_CX,
                 'q': query,
                 'start': start,
-                'num': num_urls
+                'num': 10
             }
             
-            response = requests.get(url=base_url, params=params)
+            headers = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1",
+}
+            response = requests.get(url=base_url, params=params, headers=headers)
             data = response.json()
-            print(data)
             if 'items' in data:
-                url_results.extend(self._find_contact_info(self=self, url=item['link'], params=params) for item in data['items'])
+                url_results.extend(self._find_contact_info(url=item['link'], params=params) for item in data['items'])
             else:
                 print("No Items in the Response")
         return url_results
-
-class BingSearch(SearchEngine):
-
-    def search(self, query, offset=10, num_urls=10):
-        url_results = []
-        for offset in range(0, num_urls, 10):
-            base_url = 'https://api.bing.microsoft.com/v7.0/search'
-            headers = {
-                'Ocp-Apim-Subscription-Key': BING_API_KEY
-            }
-            params = {
-                'q': query,
-                'offset': offset,
-                'count': num_urls
-            }
-            response = requests.get(base_url, headers=headers, params=params)
-            data = response.json()
-            foo = data['webPages']
-
-            url_results.extend(self._find_contact_info(self=self, url=item['url'], params=params) for item in foo['value'])
-            time.sleep(1)
-        return url_results
-    
-class EbaySearch(SearchEngine):
-
-    def search(self, query):
-        try:
-            api = Finding(appid=EBAY_APP_ID, config_file=None)
-            response = api.execute('findItemsAdvanced', {'keywords': query})
-
-            url_results = []
-
-            for item in response.reply.searchResult.item:
-                if hasattr(item, 'viewItemURL'):
-                    url_results.extend(self._find_contact_info(item.viewItemURL, {}))
-
-            return url_results
-
-        except ConnectionError as e:
-            print(e)
-            print(e.response.dict())
-            return []
-
-class MapsSearch(SearchEngine):
-
-    def search(self, query, city):
-        base_url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-        params = {
-            "query": f"{query} in {city}",
-            "key": GMAPS_API_KEY
-        }
-
-        response = requests.get(base_url, params=params)
-        data = response.json()
-
-        url_results = []
-        for result in data["results"]:
-            if "website" in result:
-                url_results.extend(self._find_contact_info(result["website"], params))
-
-        return url_results
-

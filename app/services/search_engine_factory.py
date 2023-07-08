@@ -1,9 +1,9 @@
-from .search_engines import GoogleSearch, BingSearch, EbaySearch, MapsSearch
+from .search_engines import GoogleSearch
 
 class SearchEngineFactory:
-    def create_search_engine(self, engine):
+    def create_search_engine(engine):
         if engine == 'google':
-            return GoogleSearch
+            return GoogleSearch()
         elif engine == 'bing':
             return BingSearch
         elif engine == 'ebay':
