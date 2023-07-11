@@ -228,7 +228,8 @@ def add_tokens():
 
 @main_bp.route('/send_mail', methods=["POST"])
 def mail_results():
-    history_id = request.form.get('history_id')
+    search_result_id = request.json.get('history_id')
+    history_item = 
     msg = Message("Search Result", recipients=["recipient@example.com"])  # recipient's email
     msg.body = "Here is your search result: \n" + str(history_id)
     Mail.send(msg)

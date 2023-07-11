@@ -25,9 +25,9 @@
                             </button>
                         </td>
                         <td>
-                            <button class="btn btn-primary" type="button">
+                            <button class="btn btn-primary email-btn" type="button" data-history-item-id="{{ history_item.id }}">
                                 Email
-                            </button> 
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -86,6 +86,24 @@
                         </td>
                     </tr>
                 {% endfor %}
+                <script>
+                    $('.email-btn').click(function() {
+                        var search_result_id = $(this).data('history_item.id');
+                        $.ajax({
+                            url: '/send-email',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ history_item_id: history_item_id }),
+                            success: function(response) {
+                                if (response.success) {
+                                    alert('Email sent!');
+                                } else {
+                                    alert('Error sending email.');
+                                }
+                            }
+                        });
+                    });
+                </script> 
             </tbody>
         </table>
     {% else %}

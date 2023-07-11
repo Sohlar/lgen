@@ -23,7 +23,9 @@ def create_app(config_class=Config):
             'https://cdnjs.cloudflare.com',
             'https://cdn.jsdelivr.net',
             'https://code.jquery.com',
-            'https://cdn.startbootstrap.com'  
+            'https://cdn.startbootstrap.com',
+            'https://js.stripe.com'  
+            '\'unsafe-inline\''
         ],
         'style-src': [
             '\'self\'',
@@ -39,6 +41,10 @@ def create_app(config_class=Config):
             'https://fonts.gstatic.com',
             'https://cdnjs.cloudflare.com',
             'https://cdn.jsdelivr.net'
+        ],
+        'frame-src': [
+            '\'self\'',
+            'https://js.stripe.com'  
         ]
     }
     talisman = Talisman(app, content_security_policy=csp)
