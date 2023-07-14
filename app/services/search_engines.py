@@ -77,9 +77,9 @@ class SearchEngine(ABC):
 
 class GoogleSearch(SearchEngine):
 
-    def search(self, query, start_index=0, num_urls=9):
+    def search(self, query, start_index=10, num_urls=9):
         url_results = []
-        for start in range(start_index, num_urls,9):    
+        for start in range(start_index, start_index+num_urls,10):    
             base_url = 'https://www.googleapis.com/customsearch/v1'
             params = {
                 'key': GOOG_API_KEY,
