@@ -4619,6 +4619,7 @@ textarea.form-control-lg {
 }
 
 .alert {
+  z-index: 999;
   --bs-alert-bg: transparent;
   --bs-alert-padding-x: 1rem;
   --bs-alert-padding-y: 1rem;

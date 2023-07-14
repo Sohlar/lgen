@@ -41,7 +41,7 @@ def index():
     """
     form = SearchForm()
     results = []
-    flash('Do not navigate from this page during search or it will be cancelled.', 'info')
+    flash('Do not navigate while search is running.', 'danger')
     if form.validate_on_submit():
         my_query = f"{form.query.data}" 
         if form.location.data:
@@ -229,8 +229,7 @@ def add_tokens():
 @main_bp.route('/send_mail', methods=["POST"])
 def mail_results():
     search_result_id = request.json.get('history_id')
-    history_item = 
     msg = Message("Search Result", recipients=["recipient@example.com"])  # recipient's email
-    msg.body = "Here is your search result: \n" + str(history_id)
+    msg.body = "Here is your search result: \n" + str(search_result_id)
     Mail.send(msg)
     return 'Email sent!'
