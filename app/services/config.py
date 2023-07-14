@@ -11,9 +11,6 @@ GOOGLE_CX = os.environ.get("GOOG_CX_KEY")
 if not GOOGLE_CX:
     raise ValueError('GOOGLE_CX environment variable not set')
 
-BING_API_KEY = os.environ.get("BING_API_KEY")
-if not BING_API_KEY:
-    raise ValueError('BING_API_KEY environment variable not set') 
 
 """ 
 STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
