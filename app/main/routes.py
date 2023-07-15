@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app.main import main_bp
 from app.main.forms import LoginForm, TokenPurchaseForm, RegistrationForm, CallToActionForm
 from app.main.models import User, SearchHistory, SearchResult, ContactInfo, Email, Phone
-from app.extensions import db, celery
+from app.extensions import db, bg_work
 from app.services.search_engines import GoogleSearch
 from app.services.search_engine_factory import SearchEngineFactory
 from app.services.utils import search_and_record, drop_non_results
@@ -56,10 +56,10 @@ def index():
         if not current_user.is_authenticated:
             return redirect(url_for('main.register'))
         if current_user.is_authenticated and current_user.tokens is not None:
-            print('User is auth and not None\n')
+            #print('User is auth and not None\n')
         #check if user has enough
             if current_user.tokens >= cost:
-                print('User has enough Tokens \n')
+                #print('User has enough Tokens \n')
                 current_user.tokens -= cost
                 # Save search history
                 search_history = SearchHistory(user_id=current_user.id, query=my_query, engine=my_engine, timestamp=datetime.utcnow())
@@ -74,7 +74,7 @@ def index():
                 flash('Not enough tokens. Please purchase more tokens to continue.')
     return render_template('index3.html', title='Home', form=form)
 
-#@celery.task(name="main.search_engine_task")
+@bg_work.task(name="main.search_engine_task")
 def search_engine_task(engine_str, search_history_id, query, cost):
     results = SearchEngineFactory.create_search_engine(engine=engine_str).search(query=query, num_urls = cost)
     for result in results:
@@ -127,7 +127,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        print("User added to the database")
+        #print("User added to the database")
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('main.login'))
     return render_template('register.html', title='Register', form=form)

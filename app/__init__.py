@@ -2,7 +2,7 @@ from flask import Flask
 from app.config import Config
 import os
 from urllib.parse import quote_plus
-from .extensions import db, login_manager, migrate, celery
+from .extensions import db, login_manager, migrate, bg_work
 from flask_talisman import Talisman
 
 def create_app(config_class=Config):
@@ -49,16 +49,16 @@ def create_app(config_class=Config):
     }
     talisman = Talisman(app, content_security_policy=csp)
 
-    celery.conf.update(app.config['CELERY'])
+    bg_work.conf.update(app.config['CELERY'])
 
-    class ContextTask(celery.Task):
+    class ContextTask(bg_work.Task):
         abstract = True
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
                 return super(ContextTask, self).__call__(*args, **kwargs)
 
-    celery.Task = ContextTask
+    bg_work.Task = ContextTask
 
     from app.main import main_bp
     app.register_blueprint(main_bp)

@@ -7,4 +7,4 @@ from celery import Celery
 db = SQLAlchemy()
 login_manager = LoginManager()
 migrate = Migrate()
-celery = Celery()
+bg_work = Celery()
