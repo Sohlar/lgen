@@ -3,8 +3,9 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_talisman import Talisman
 from celery import Celery
+from .config import Config
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 migrate = Migrate()
-bg_work = Celery()
+celery = Celery(broker=Config.CELERY['BROKER_URL'], backend=Config.CELERY['RESULT_BACKEND'])

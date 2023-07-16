@@ -10,11 +10,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
     url = urlparse(os.environ.get('DATABASE_URL'))
-    url = url._replace(scheme=url.scheme.replace('postgres', 'postgresql'))
+    #url = url._replace(scheme=url.scheme.replace('postgres', 'postgresql'))
     SQLALCHEMY_DATABASE_URI = urlunparse(url)
     #or \    f"sqlite:///{os.path.join(basedir, 'app.db')}"
-    CELERY = {'BROKER_URL': os.environ['REDIS_TLS_URL'],
-              'RESULT_BACKEND' : os.environ['REDIS_TLS_URL']}
+    print("Redis URL:", os.environ['REDIS_TLS_URL'])
+
+    CELERY = {'BROKER_URL': os.environ['REDIS_TLS_URL']+ '?ssl_cert_reqs=CERT_NONE',
+              'RESULT_BACKEND' : os.environ['REDIS_TLS_URL']+ '?ssl_cert_reqs=CERT_NONE'}
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True

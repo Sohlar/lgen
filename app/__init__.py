@@ -2,8 +2,20 @@ from flask import Flask
 from app.config import Config
 import os
 from urllib.parse import quote_plus
-from .extensions import db, login_manager, migrate, bg_work
+from .extensions import db, login_manager, migrate, celery
 from flask_talisman import Talisman
+
+
+def make_celery(app):
+
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return super(ContextTask, self).__call__(*args, **kwargs)
+
+    celery.Task = ContextTask
+    from .main.tasks import search_engine_task
+    return celery
 
 def create_app(config_class=Config):
     print(os.environ.get('DATABASE_URL'))
@@ -13,6 +25,8 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
+    
+    make_celery(app)
 
     csp = {
         'default-src': [
@@ -49,16 +63,10 @@ def create_app(config_class=Config):
     }
     talisman = Talisman(app, content_security_policy=csp)
 
-    bg_work.conf.update(app.config['CELERY'])
 
-    class ContextTask(bg_work.Task):
-        abstract = True
 
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return super(ContextTask, self).__call__(*args, **kwargs)
 
-    bg_work.Task = ContextTask
+
 
     from app.main import main_bp
     app.register_blueprint(main_bp)
