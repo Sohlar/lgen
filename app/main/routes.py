@@ -13,7 +13,7 @@ from datetime import datetime
 from flask_mail import Mail, Message 
 import time
 from app.extensions import celery
-from .tasks import search_engine_task
+from .tasks import search_engine_task, send_email_async
 
 
 
@@ -210,7 +210,6 @@ def add_tokens():
 @main_bp.route('/send_mail', methods=["POST"])
 def mail_results():
     search_result_id = request.json.get('history_id')
-    msg = Message("Search Result", recipients=["recipient@example.com"])  # recipient's email
-    msg.body = "Here is your search result: \n" + str(search_result_id)
-    Mail.send(msg)
-    return 'Email sent!'
+    recipient = "recipient@example.com"  # recipient's email
+    send_email_async.delay(search_result_id, recipient)  # .delay is used to call the task asynchronously
+    return 'Email sending scheduled!', 200

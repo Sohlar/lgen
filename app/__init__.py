@@ -1,10 +1,12 @@
 from flask import Flask
+from flask_mail import Mail
 from app.config import Config
 import os
 from urllib.parse import quote_plus
 from .extensions import db, login_manager, migrate, celery
 from flask_talisman import Talisman
 
+mail = Mail()
 
 def make_celery(app):
 
@@ -18,10 +20,11 @@ def make_celery(app):
     return celery
 
 def create_app(config_class=Config):
-    print(os.environ.get('DATABASE_URL'))
+
     app = Flask(__name__)
     app.config.from_object(config_class)
 
+    mail.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
@@ -62,11 +65,6 @@ def create_app(config_class=Config):
         ]
     }
     talisman = Talisman(app, content_security_policy=csp)
-
-
-
-
-
 
     from app.main import main_bp
     app.register_blueprint(main_bp)
