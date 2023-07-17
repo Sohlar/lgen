@@ -4,9 +4,13 @@ from app.services.search_engine_factory import SearchEngineFactory
 from app.main.models import SearchResult, ContactInfo, Email, Phone
 from flask_mail import Message
 from app import celery, mail
+import tracemalloc
+from ..services.logger import logger
 
 @celery.task(bind=True, name="main.search_engine_task")
 def search_engine_task(self, engine_str, search_history_id, query, cost):
+    logger.debug("Entering celery task")
+    tracemalloc.start()
     results = SearchEngineFactory.create_search_engine(engine=engine_str).search(query=query, num_urls = cost)
     print('RUNNING TASK NOWWWWWW')
     for result in results:
@@ -34,6 +38,9 @@ def search_engine_task(self, engine_str, search_history_id, query, cost):
                 db.session.add(phone)
             print('Search Done')
     db.session.commit()
+    current, peak = tracemalloc.get_traced_memory()
+    logger.debug(f"Current memory is {current / 10**6}MB; Peak was {peak / 10**6}MB")
+    tracemalloc.stop()
 
 @celery.task
 def send_email_async(search_result_id, recipient):
