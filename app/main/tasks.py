@@ -5,13 +5,16 @@ from app.main.models import SearchResult, ContactInfo, Email, Phone
 from flask_mail import Message
 from app import celery, mail
 import tracemalloc
-from ..services.logger import logger
+from app.services.logger import logger
 
 @celery.task(bind=True, name="main.search_engine_task")
 def search_engine_task(self, engine_str, search_history_id, query, cost):
     logger.debug("Entering celery task")
     tracemalloc.start()
     results = SearchEngineFactory.create_search_engine(engine=engine_str).search(query=query, num_urls = cost)
+
+
+#    results2 = 
     print('RUNNING TASK NOWWWWWW')
     for result in results:
         if (result['email'] or result['phone']):
@@ -33,9 +36,12 @@ def search_engine_task(self, engine_str, search_history_id, query, cost):
             for email_addr in emails:
                 email = Email(contact_info_id=contact_info.id, email=email_addr)
                 db.session.add(email)
+                db.session.flush()
+
             for phone_addr in phones:
                 phone = Phone(contact_info_id=contact_info.id, phone=phone_addr)
                 db.session.add(phone)
+                db.session.flush()
             print('Search Done')
     db.session.commit()
     current, peak = tracemalloc.get_traced_memory()
