@@ -6,7 +6,7 @@ import phonenumbers
 from email_validator import validate_email, EmailNotValidError
 import time
 from abc import ABC, abstractmethod
-from mem_usage import log_memory_usage
+from .mem_usage import log_memory_usage
 
 # Import API keys from config.py
 from .config import GOOG_API_KEY, GOOGLE_CX
