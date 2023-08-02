@@ -6,11 +6,10 @@ from flask_mail import Message
 from app import  celery, mail
 import tracemalloc
 from app.services.logger import logger
-from memory_profiler import profile
+
 
 
 @celery.task(bind=True, name="main.search_engine_task")
-@profile
 def search_engine_task(self, engine_str, search_history_id, query, cost):
     logger.debug("Entering celery task")
     tracemalloc.start()

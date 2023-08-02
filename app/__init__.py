@@ -5,10 +5,9 @@ import os
 from urllib.parse import quote_plus
 from .extensions import db, login_manager, migrate, celery
 from flask_talisman import Talisman
-from memory_profiler import profile
+
 
 mail = Mail()
-@profile
 def make_celery(app):
 
     class ContextTask(celery.Task):
@@ -20,7 +19,7 @@ def make_celery(app):
     from .main.tasks import search_engine_task
     return celery
 
-@profile
+
 def create_app(config_class=Config):
 
     app = Flask(__name__)
