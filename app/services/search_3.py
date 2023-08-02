@@ -89,13 +89,12 @@ class GoogleSearch:
             return ({'email': None, 'phone': None, 'url': url})
         
         email = self.find_email_addresses(content=url_content)
+        #print(email)
         phone = self.find_phone_numbers(content=url_content, is_html=True)
+        # print(email)
         return ({'email': email, 'phone': phone, 'url': url})
 
-if __name__ == "__main__":
+""" if __name__ == "__main__":
     gs = GoogleSearch()
-    profiler = cProfile.Profile()
-    profiler.enable()
-    gs.search('test query')
-    profiler.disable()
-    profiler.print_stats(sort='time')
+    results = gs.search('orange farms in california')
+    print(results) """

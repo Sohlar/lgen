@@ -82,6 +82,8 @@ class GoogleSearch:
                 valid_numbers.append(formatted_number)
         return valid_numbers
 
+
+    # Individual requests to urls gathered
     def _find_contact_info(self, url):
         url_content = self.get_page_content(url=url)
 
