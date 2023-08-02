@@ -96,8 +96,11 @@ class GoogleSearch(SearchEngine):
             headers = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1", 'Accept-Encoding': 'gzip'}
             response = requests.get(url=base_url, params=params, headers=headers)
             data = response.json()
+            response.close()
+            del response
             if 'items' in data:
-                url_results.extend(self._find_contact_info(url=item['link'], params=params) for item in data['items'])
+                for item in data['items']:
+                    url_results.append(self._find_contact_info(url=item['link'], params=params))
             else:
                 print("No Items in the Response")
         return url_results
