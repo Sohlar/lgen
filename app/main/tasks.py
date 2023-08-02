@@ -3,11 +3,14 @@ from app.services.search_engines import GoogleSearch
 from app.services.search_engine_factory import SearchEngineFactory
 from app.main.models import SearchResult, ContactInfo, Email, Phone
 from flask_mail import Message
-from app import celery, mail
+from app import  celery, mail
 import tracemalloc
 from app.services.logger import logger
+from memory_profiler import profile
+
 
 @celery.task(bind=True, name="main.search_engine_task")
+@profile
 def search_engine_task(self, engine_str, search_history_id, query, cost):
     logger.debug("Entering celery task")
     tracemalloc.start()
@@ -21,9 +24,6 @@ def search_engine_task(self, engine_str, search_history_id, query, cost):
             if (result['email'] or result['phone']):
                 emails = result['email'] 
                 phones = result['phone'] 
-                print(emails)
-                print(phones)
-                print('---------\n')
                 search_result = SearchResult(search_history_id=search_history_id, url=result['url'])
                 print(f'*Search Result: {search_result}')
                 db.session.add(search_result)
@@ -39,7 +39,6 @@ def search_engine_task(self, engine_str, search_history_id, query, cost):
                     phone = Phone(contact_info_id=contact_info.id, phone=phone_addr)
                     db.session.add(phone)
 
-                print('Search Done')
         db.session.commit()
     except Exception as e:
         db.session.rollback()

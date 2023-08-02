@@ -14,7 +14,7 @@ from flask_mail import Mail, Message
 import time
 from app.extensions import celery
 from .tasks import search_engine_task, send_email_async
-
+from memory_profiler import profile
 
 
 import stripe
@@ -22,6 +22,7 @@ TOKENS_PER_RESULT = 1
 
 @main_bp.route('/')
 @main_bp.route('/index', methods=['GET', 'POST'])
+@profile
 def index():
     """
     Handles requests for the application's home page.
