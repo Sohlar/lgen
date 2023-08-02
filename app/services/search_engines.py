@@ -66,6 +66,7 @@ class SearchEngine(ABC):
         return valid_numbers
 
     def _find_contact_info(self, url, params):
+        log_memory_usage()
         url_content = self.get_page_content(url=url, params=params)
 
         if url_content is None:
