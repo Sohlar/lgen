@@ -1,31 +1,48 @@
 import requests
 import json
 import re
+import cProfile
 from bs4 import BeautifulSoup
 import phonenumbers
 from email_validator import validate_email, EmailNotValidError
-import time
-from abc import ABC, abstractmethod
-from mem_usage import log_memory_usage
 
 # Import API keys from config.py
-from .config import GOOG_API_KEY, GOOGLE_CX
+#from .config import GOOG_API_KEY, GOOGLE_CX
 
-class SearchEngine(ABC):
-    
-    @abstractmethod
-    def search(self, query):
-        pass
+GOOG_API_KEY='AIzaSyDg8CrXndtVBqzpkwEKqwTFm2IkCqVvYUo'
+GOOGLE_CX='85905c2b5e8aa405b'
 
-    def get_page_content(self, url, params):
+class GoogleSearch:
+
+    def search(self, query, start_index=10, num_urls=9):
+        url_results = []
+        for start in range(start_index, start_index+num_urls,10):    
+            base_url = 'https://www.googleapis.com/customsearch/v1'
+            params = {
+                'key': GOOG_API_KEY,
+                'cx': GOOGLE_CX,
+                'q': query,
+                'start': start,
+                'num': 10
+            }
+            
+            headers = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1", 'Accept-Encoding': 'gzip'}
+            response = requests.get(url=base_url, params=params, headers=headers)
+            data = response.json()
+            if 'items' in data:
+                url_results.extend(self._find_contact_info(url=item['link']) for item in data['items'])
+            else:
+                print("No Items in the Response")
+        return url_results
+
+    def get_page_content(self, url):
         try:
-            response = requests.get(url, params)
+            response = requests.get(url)
             if response.status_code == 200:
                 return response.text
             else:
                 print(f"Error: {response.status_code}")
                 print(f"Reason: {response.reason}")
-                #print(f"Reason: {response.text}")
                 return None
         except Exception as e:
             print(f"Error: {e}")
@@ -65,8 +82,8 @@ class SearchEngine(ABC):
                 valid_numbers.append(formatted_number)
         return valid_numbers
 
-    def _find_contact_info(self, url, params):
-        url_content = self.get_page_content(url=url, params=params)
+    def _find_contact_info(self, url):
+        url_content = self.get_page_content(url=url)
 
         if url_content is None:
             return ({'email': None, 'phone': None, 'url': url})
@@ -75,28 +92,10 @@ class SearchEngine(ABC):
         phone = self.find_phone_numbers(content=url_content, is_html=True)
         return ({'email': email, 'phone': phone, 'url': url})
 
-
-class GoogleSearch(SearchEngine):
-
-    def search(self, query, start_index=10, num_urls=9):
-        url_results = []
-        
-        for start in range(start_index, start_index+num_urls,10):    
-            log_memory_usage()
-            base_url = 'https://www.googleapis.com/customsearch/v1'
-            params = {
-                'key': GOOG_API_KEY,
-                'cx': GOOGLE_CX,
-                'q': query,
-                'start': start,
-                'num': 10
-            }
-            
-            headers = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1", 'Accept-Encoding': 'gzip'}
-            response = requests.get(url=base_url, params=params, headers=headers)
-            data = response.json()
-            if 'items' in data:
-                url_results.extend(self._find_contact_info(url=item['link'], params=params) for item in data['items'])
-            else:
-                print("No Items in the Response")
-        return url_results
+if __name__ == "__main__":
+    gs = GoogleSearch()
+    profiler = cProfile.Profile()
+    profiler.enable()
+    gs.search('test query')
+    profiler.disable()
+    profiler.print_stats(sort='time')
