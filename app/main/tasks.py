@@ -32,10 +32,12 @@ def search_engine_task(self, engine_str, search_history_id, query, cost):
                 #Not sure why we are looping through run debugger to check if emails = []
                 for email_addr in emails:
                     email = Email(contact_info_id=contact_info.id, email=email_addr)
+                    logger.debug(f"*/ Email Added: {email}")
                     db.session.add(email)
 
                 for phone_addr in phones:
                     phone = Phone(contact_info_id=contact_info.id, phone=phone_addr)
+                    logger.debug(f"*/ Phone Added: {phone}")
                     db.session.add(phone)
 
         db.session.commit()
