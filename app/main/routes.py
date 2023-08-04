@@ -54,15 +54,15 @@ def index():
         my_engine = 'google'
         desired_results = form.desired_results.data
         #calculate the cost of the search
-        cost = TOKENS_PER_RESULT * int(desired_results)
+        tok_cost = TOKENS_PER_RESULT * int(desired_results)
         if not current_user.is_authenticated:
             return redirect(url_for('main.register'))
         if current_user.is_authenticated and current_user.tokens is not None:
             #print('User is auth and not None\n')
         #check if user has enough
-            if current_user.tokens >= cost:
+            if current_user.tokens >= tok_cost:
                 #print('User has enough Tokens \n')
-                current_user.tokens -= cost
+                current_user.tokens -= tok_cost
                 # Save search history
                 search_history = SearchHistory(user_id=current_user.id, query=my_query, engine=my_engine, timestamp=datetime.utcnow())
                 db.session.add(search_history)
@@ -70,7 +70,8 @@ def index():
                 # Create a search engine using the factory
                 #search_engine = SearchEngineFactory().create_search_engine(my_engine)
                 # Perform the search and record the results
-                search_engine_task.delay('google', search_history.id, my_query, cost)
+                print(current_user.id)
+                search_engine_task.delay(search_history_id=search_history.id, query=my_query,cost=tok_cost, user_id=1)
                 #search_engine_task('google', search_history.id, my_query, cost)
             else:
                 flash('Not enough tokens. Please purchase more tokens to continue.')
