@@ -71,7 +71,7 @@ def index():
                 #search_engine = SearchEngineFactory().create_search_engine(my_engine)
                 # Perform the search and record the results
                 print(current_user.id)
-                search_engine_task.delay(search_history_id=search_history.id, query=my_query,cost=tok_cost, user_id=1)
+                search_engine_task.delay(search_history_id=search_history.id, query=my_query,cost=tok_cost, user_id=current_user.id)
                 #search_engine_task('google', search_history.id, my_query, cost)
             else:
                 flash('Not enough tokens. Please purchase more tokens to continue.')
