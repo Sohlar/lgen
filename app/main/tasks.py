@@ -53,7 +53,7 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
         user = User.query.get(user_id)
         
         
-        send_email_async(get_most_recent_search_result(user, search_history_id), user.email)
+        send_email_async(get_most_recent_search_result(user), user.email)
         
     except Exception as e:
         
@@ -80,9 +80,8 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
         print("No search results found for the given search history.")
         return """
     
-def get_most_recent_search_result(user_id):
+def get_most_recent_search_result(user):
     # Retrieve the user instance by user_id
-    user = User.query.get(user_id)
     
     if not user:
         print("No user found for the given id.")
