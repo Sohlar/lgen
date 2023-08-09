@@ -51,6 +51,7 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
         
         # Send result emails after the search is complete
         user = User.query.get(user_id)
+        logger.debug(f"*/--------\n*/------{user}\n*/--------")
         
         
         send_email_async(get_most_recent_search_result(user), user.email)
