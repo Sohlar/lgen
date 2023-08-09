@@ -90,6 +90,8 @@ def get_most_recent_search_result(user):
 
     # Get the search history for the user
     search_history = user.search_history
+    logger.debug(f"{search_history}")
+    logger.debug(type(search_history))
 
     if not search_history:
         print("No search history found for the given user.")
