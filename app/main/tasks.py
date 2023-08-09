@@ -64,8 +64,8 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
         
         db.session.close()
 
-def get_most_recent_search_result(user_id, search_history_id):
-    search_history = SearchHistory.query.filter_by(user_id=user_id).first()
+""" def get_most_recent_search_result(user_id, search_history_id):
+    search_history = SearchHistory.query.get(user_id).first()
 
     if not search_history:
         print("No search history found for the given id and user.")
@@ -78,7 +78,36 @@ def get_most_recent_search_result(user_id, search_history_id):
     
     else:
         print("No search results found for the given search history.")
+        return """
+    
+def get_most_recent_search_result(user_id):
+    # Retrieve the user instance by user_id
+    user = User.query.get(user_id)
+    
+    if not user:
+        print("No user found for the given id.")
         return
+
+    # Get the search history for the user
+    search_history = user.search_history
+
+    if not search_history:
+        print("No search history found for the given user.")
+        return
+
+    # Get the most recent search result from the user's search history
+    most_recent_search_result = search_history.results.order_by(SearchResult.id.desc()).first()
+
+    if most_recent_search_result:
+        return most_recent_search_result
+    else:
+        print("No search results found for the given search history.")
+        return
+
+
+
+
+
 
 @celery.task
 def send_email_async(search_result, recipient):
