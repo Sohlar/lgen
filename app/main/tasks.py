@@ -100,7 +100,7 @@ def send_email_async(search_result, recipient):
             
             mail.send(msg)
     else:
-        print(f"No search result found with id {search_result_id}")
+        print(f"No search result found with id {search_result}")
 
 
 
