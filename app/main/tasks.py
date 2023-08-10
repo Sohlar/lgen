@@ -6,6 +6,7 @@ from flask_mail import Message
 from app import  celery, mail
 from app.services.logger import logger
 from app.services.search_3 import GoogleSearch
+import stripe
 
 @celery.task(bind=True, name="main.search_engine_task")
 def search_engine_task(self, search_history_id, query, cost, user_id):
@@ -86,7 +87,7 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
 
     if most_recent_search_result:
         return most_recent_search_result
-    
+        
     else:
         print("No search results found for the given search history.")
         return """
@@ -116,7 +117,29 @@ def get_most_recent_search_result(user):
         print("No search results found for the given search history.")
         return
 
-
+@celery.task(bind=True)
+def process_purchase(self, user_id, num_tokens, stripe_token):
+    user = User.query.get(user_id)
+    
+    try:
+        # Create a stripe charge for the token purchase
+        create_stripe_charge(num_tokens * 110, stripe_token, user.username)
+        
+        # Update user's token balance
+        user.tokens += num_tokens
+        db.session.commit()
+        
+    except stripe.error.CardError as e:
+        # You might want to handle the error, e.g., notify the user or retry the task
+        self.retry(exc=e, countdown=60*5, max_retries=3)
+        
+def create_stripe_charge(amount, token, username):
+    stripe.Charge.create(
+        amount=amount,
+        currency='usd',
+        source=token,
+        description=f'Token purchase for {username}'
+    )
 
 @celery.task
 def send_email_async(search_data, recipient):

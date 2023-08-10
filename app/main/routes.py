@@ -13,7 +13,7 @@ from datetime import datetime
 from flask_mail import Mail, Message 
 import time
 from app.extensions import celery
-from .tasks import search_engine_task, send_email_async
+from .tasks import search_engine_task, send_email_async, process_purchase
 
 
 import stripe
@@ -43,7 +43,6 @@ def index():
     """
     form = SearchForm()
     results = []
-    flash('Do not navigate while search is running.', 'danger')
     if form.validate_on_submit():
         my_query = f"{form.query.data}" 
         if form.location.data:
@@ -131,39 +130,12 @@ def buy_tokens():
     if form.validate_on_submit():
         #calc token cost  
         num_tokens = form.num_tokens.data * 110
-        user = current_user
-        
-        #Variable to track payment success
-        success = False
-        try:
             #Create a stripe charge for the token purchase
-            create_stripe_charge(num_tokens, form.stripe_token.data, user.username)
-
-            #Update user's token balance
-            current_user.tokens += form.num_tokens.data
-            db.session.commit()
-
-            #Show success message
-            flash(f'Success! You have purchased {form.num_tokens.data} tokens.', 'success')
-            success = True
-        
-        except stripe.error.CardError as e:
-            return jsonify({'status': 'error', 'message': f'Error occurred while processing the payment: {str(e)}'})
-
-        if success:
-            user.tokens += num_tokens
-            db.session.commit()
-            return jsonify({'status': 'error', 'message': 'Success'})
+            
+        process_purchase.delay(current_user.id, num_tokens, form.stripe_token.data)
+        return jsonify({'status': 'processing', 'message': 'Your purchase is being processed.'})
     return render_template('buy_tokens.html', title='Buy Tokens', form=form)
 
-
-def create_stripe_charge(amount, token, username):
-    stripe.Charge.create(
-        amount=amount,
-        currency='usd',
-        source=token,
-        description=f'Token purchase for {username}'
-    )
 
 
 @main_bp.route('/login', methods=['GET', 'POST'])
