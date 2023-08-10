@@ -21,12 +21,22 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
     logger.debug('Search ended *\ Adding Results to DB')
     
     try:
+        all_emails = []
+        all_phones = []
+        all_urls = []
+        
         for result in results:
     
             if (result['email'] or result['phone']):
 
                 emails = result['email'] 
                 phones = result['phone'] 
+                urls = result['url']
+
+                all_emails.extend(emails)
+                all_phones.extend(phones)
+                all_urls.append(urls)
+
 
                 search_result = SearchResult(search_history_id=search_history_id, url=result['url'])
                 logger.debug(f'*Search Result: {search_result}')
@@ -54,7 +64,7 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
         logger.debug(f"*/--------\n*/------{user}\n*/--------")
         
         
-        send_email_async(get_most_recent_search_result(user), user.email)
+        send_email_async({"emails": all_emails, "phones": all_phones, "urls": all_urls}, user.email)
         
     except Exception as e:
         
@@ -108,10 +118,34 @@ def get_most_recent_search_result(user):
 
 
 
-
-
-
 @celery.task
+def send_email_async(search_data, recipient):
+    if search_data:
+        # Directly access the emails, phones, and urls from the dictionary
+        emails = search_data.get("emails", [])
+        phones = search_data.get("phones", [])
+        urls = search_data.get("urls", [])
+
+        if emails or phones or urls:
+            msg = Message("Search Result", recipients=[recipient])  # recipient's email
+            msg.body = "Here is your search result: \n"
+            
+            # Add URLs, emails, and phones to the email body
+            if urls:
+                msg.body += f"URLs: {', '.join(urls)}\n"
+            if emails:
+                msg.body += f"Emails: {', '.join(emails)}\n"
+            if phones:
+                msg.body += f"Phones: {', '.join(phones)}"
+            
+            mail.send(msg)
+        else:
+            print("No emails, phones, or URLs found in search data")
+    else:
+        print("No search data provided")
+
+
+""" @celery.task
 def send_email_async(search_result, recipient):
     
     if search_result is not None:
@@ -132,7 +166,7 @@ def send_email_async(search_result, recipient):
             mail.send(msg)
     else:
         print(f"No search result found with id {search_result}")
-
+ """
 
 
 
