@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, jsonify, abort
+from flask import render_template, url_for, flash, redirect, request, jsonify, abort, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from app.main import main_bp
 from app.main.forms import LoginForm, TokenPurchaseForm, RegistrationForm, CallToActionForm
@@ -134,7 +134,7 @@ def buy_tokens():
             
         process_purchase.delay(current_user.id, num_tokens, form.stripe_token.data)
         return jsonify({'status': 'processing', 'message': 'Your purchase is being processed.'})
-    return render_template('buy_tokens.html', title='Buy Tokens', form=form)
+    return render_template('buy_tokens.html', title='Buy Tokens', stripe_public_key=current_app.config['PUBLIC_STRIPE_KEY'], form=form)
 
 
 
