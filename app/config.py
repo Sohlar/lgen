@@ -10,8 +10,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
+    STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
     url = urlparse(os.environ.get('DATABASE_URL'))
-    url = url._replace(scheme=url.scheme.replace('postgres', 'postgresql'))
+    #url = url._replace(scheme=url.scheme.replace('postgres', 'postgresql'))
     SQLALCHEMY_DATABASE_URI = urlunparse(url)
     #or \    f"sqlite:///{os.path.join(basedir, 'app.db')}"
 

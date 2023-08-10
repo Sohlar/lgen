@@ -4,6 +4,7 @@
 
 {% block content %}
   <h1>Buy Tokens</h1>
+  <script src="https://js.stripe.com/v3/"></script>
   <form action="{{ url_for('main.buy_tokens')}}" method="POST" id="payment-form">
     {{form.hidden_tag() }}
     <div class="col-md-3">
@@ -21,9 +22,8 @@
     <button type="submit" class="col-md-3 btn-primary">Purchase</button>
   </form>
 
-  <script src="https://js.stripe.com/v3/"></script>
   <script>
-    var stripe = Stripe('your_stripe_public_key_here');
+    var stripe = Stripe('stripe_public_key');
     var elements = stripe.elements();
 
     var card = elements.create('card');

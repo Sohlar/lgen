@@ -42,7 +42,16 @@ def create_app(config_class=Config):
             'https://cdn.jsdelivr.net',
             'https://code.jquery.com',
             'https://cdn.startbootstrap.com',
-            'https://js.stripe.com'  
+            'https://js.stripe.com',  
+            '\'unsafe-inline\''
+        ],
+        'script-src-elem': [
+            '\'self\'',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+            'https://code.jquery.com',
+            'https://cdn.startbootstrap.com',
+            'https://js.stripe.com',  
             '\'unsafe-inline\''
         ],
         'style-src': [
