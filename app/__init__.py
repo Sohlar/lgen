@@ -7,7 +7,7 @@ from .extensions import db, login_manager, migrate, celery
 from flask_talisman import Talisman
 
 
-#mail = Mail()
+mail = Mail()
 def make_celery(app):
 
     class ContextTask(celery.Task):
@@ -24,8 +24,8 @@ def create_app(config_class=Config):
 
     app = Flask(__name__)
     app.config.from_object(config_class)
-    mail = Mail(app)
-    #mail.init_app(app)
+
+    mail.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)

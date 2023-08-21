@@ -10,4 +10,4 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 migrate = Migrate()
 celery = Celery(broker=Config.CELERY['BROKER_URL'], backend=Config.CELERY['RESULT_BACKEND'])
-mail = Mail()
+mail = Mail
