@@ -7,10 +7,10 @@ import phonenumbers
 from email_validator import validate_email, EmailNotValidError
 
 # Import API keys from config.py
-#from .config import GOOG_API_KEY, GOOGLE_CX
+from .config import GOOG_API_KEY, GOOGLE_CX
 
-GOOG_API_KEY='AIzaSyDg8CrXndtVBqzpkwEKqwTFm2IkCqVvYUo'
-GOOGLE_CX='85905c2b5e8aa405b'
+
+
 
 class GoogleSearch:
 

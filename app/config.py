@@ -21,9 +21,9 @@ class Config:
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = 'Databoxnoreply@gmail.com'  # enter your email here
-    MAIL_DEFAULT_SENDER = 'Databoxnoreply@gmail.com'  # enter your email here
-    MAIL_PASSWORD = 'Happyhouseworks10!'  # enter your password here
+    MAIL_USERNAME = os.environ['MAIL_USERNAME']
+    MAIL_DEFAULT_SENDER = os.environ['MAIL_DEFAULT_SENDER']
+    MAIL_PASSWORD = os.environ['MAIL_PASSWORD']
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
