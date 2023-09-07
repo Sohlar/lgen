@@ -32,8 +32,8 @@ class GoogleSearch:
             if 'items' in data:
                 for item in data['items']:
                     yield self._find_contact_info(url=item['link'])
+                    item.clear()  # Clear each item after yielding
                 del data['items']
-                #url_results.extend(self._find_contact_info(url=item['link']) for item in data['items'])
             else:
                 print("No Items in the Response")
         
@@ -60,15 +60,15 @@ class GoogleSearch:
         email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
         emails = email_pattern.findall(content)
 
-        valid_emails = []
-
-        for email in emails:
-            try:
-                validate_email(email)
-                valid_emails.append(email)
-            except EmailNotValidError:
-                pass
+        valid_emails = [email for email in emails if self.is_valid_email(email)]
         return valid_emails
+
+    def is_valid_email(self, email):
+        try:
+            validate_email(email)
+            return True
+        except EmailNotValidError:
+            return False
 
     def find_phone_numbers(self, content, default_region='US', is_html=False):
         if is_html:
@@ -77,13 +77,11 @@ class GoogleSearch:
 
         content = self.preprocess_text(content=content)
 
-        valid_numbers = []
-        for match in phonenumbers.PhoneNumberMatcher(content, default_region):
-            number = match.number
-            if phonenumbers.is_valid_number(number):
-                formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
-                valid_numbers.append(formatted_number)
+        valid_numbers = [self.format_number(match.number) for match in phonenumbers.PhoneNumberMatcher(content, default_region) if phonenumbers.is_valid_number(match.number)]
         return valid_numbers
+
+    def format_number(self, number):
+        return phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
 
     def _find_contact_info(self, url):
         url_content = self.get_page_content(url=url)
@@ -92,9 +90,7 @@ class GoogleSearch:
             return ({'email': None, 'phone': None, 'url': url})
         
         email = self.find_email_addresses(content=url_content)
-        #print(email)
         phone = self.find_phone_numbers(content=url_content, is_html=True)
-        # print(email)
         return ({'email': email, 'phone': phone, 'url': url})
 
 """ if __name__ == "__main__":
