@@ -15,7 +15,7 @@ from .config import GOOG_API_KEY, GOOGLE_CX
 class GoogleSearch:
 
     def search(self, query, start_index=10, num_urls=9):
-        url_results = []
+        
         for start in range(start_index, start_index+num_urls,10):    
             base_url = 'https://www.googleapis.com/customsearch/v1'
             params = {
@@ -30,10 +30,13 @@ class GoogleSearch:
             response = requests.get(url=base_url, params=params, headers=headers)
             data = response.json()
             if 'items' in data:
-                url_results.extend(self._find_contact_info(url=item['link']) for item in data['items'])
+                for item in data['items']:
+                    yield self._find_contact_info(url=item['link'])
+                del data['items']
+                #url_results.extend(self._find_contact_info(url=item['link']) for item in data['items'])
             else:
                 print("No Items in the Response")
-        return url_results
+        
 
     def get_page_content(self, url):
         try:

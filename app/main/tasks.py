@@ -17,7 +17,7 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
     
     gs = GoogleSearch()
     
-    results = gs.search(query, num_urls=cost)
+    results = list(gs.search(query, num_urls=cost))
 
     logger.debug('Search ended *\ Adding Results to DB')
     
