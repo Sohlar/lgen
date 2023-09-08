@@ -1,11 +1,11 @@
 import requests
-import json
+
 import re
-import cProfile
+
 from bs4 import BeautifulSoup
 import phonenumbers
 from email_validator import validate_email, EmailNotValidError
-from dotenv import load_dotenv
+
 
 # Import API keys from config.py
 
@@ -13,30 +13,30 @@ from .config import GOOG_API_KEY, GOOGLE_CX
 
 
 class GoogleSearch:
-
     def search(self, query, start_index=10, num_urls=9):
-        
-        for start in range(start_index, start_index+num_urls,10):    
-            base_url = 'https://www.googleapis.com/customsearch/v1'
+        for start in range(start_index, start_index + num_urls, 10):
+            base_url = "https://www.googleapis.com/customsearch/v1"
             params = {
-                'key': GOOG_API_KEY,
-                'cx': GOOGLE_CX,
-                'q': query,
-                'start': start,
-                'num': 10
+                "key": GOOG_API_KEY,
+                "cx": GOOGLE_CX,
+                "q": query,
+                "start": start,
+                "num": 10,
             }
-            
-            headers = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1", 'Accept-Encoding': 'gzip'}
+
+            headers = {
+                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1",
+                "Accept-Encoding": "gzip",
+            }
             response = requests.get(url=base_url, params=params, headers=headers)
             data = response.json()
-            if 'items' in data:
-                for item in data['items']:
-                    yield self._find_contact_info(url=item['link'])
+            if "items" in data:
+                for item in data["items"]:
+                    yield self._find_contact_info(url=item["link"])
                     item.clear()  # Clear each item after yielding
-                del data['items']
+                del data["items"]
             else:
                 print("No Items in the Response")
-        
 
     def get_page_content(self, url):
         try:
@@ -52,12 +52,14 @@ class GoogleSearch:
             return None
 
     def preprocess_text(self, content):
-        content = content.replace('\n', ' ')
-        content = re.sub(r'\s+', ' ', content)
+        content = content.replace("\n", " ")
+        content = re.sub(r"\s+", " ", content)
         return content
 
     def find_email_addresses(self, content):
-        email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+        email_pattern = re.compile(
+            r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+        )
         emails = email_pattern.findall(content)
 
         valid_emails = [email for email in emails if self.is_valid_email(email)]
@@ -70,14 +72,18 @@ class GoogleSearch:
         except EmailNotValidError:
             return False
 
-    def find_phone_numbers(self, content, default_region='US', is_html=False):
+    def find_phone_numbers(self, content, default_region="US", is_html=False):
         if is_html:
-            soup = BeautifulSoup(content, 'html.parser')
+            soup = BeautifulSoup(content, "html.parser")
             content = soup.get_text()
 
         content = self.preprocess_text(content=content)
 
-        valid_numbers = [self.format_number(match.number) for match in phonenumbers.PhoneNumberMatcher(content, default_region) if phonenumbers.is_valid_number(match.number)]
+        valid_numbers = [
+            self.format_number(match.number)
+            for match in phonenumbers.PhoneNumberMatcher(content, default_region)
+            if phonenumbers.is_valid_number(match.number)
+        ]
         return valid_numbers
 
     def format_number(self, number):
@@ -87,11 +93,12 @@ class GoogleSearch:
         url_content = self.get_page_content(url=url)
 
         if url_content is None:
-            return ({'email': None, 'phone': None, 'url': url})
-        
+            return {"email": None, "phone": None, "url": url}
+
         email = self.find_email_addresses(content=url_content)
         phone = self.find_phone_numbers(content=url_content, is_html=True)
-        return ({'email': email, 'phone': phone, 'url': url})
+        return {"email": email, "phone": phone, "url": url}
+
 
 """ if __name__ == "__main__":
     gs = GoogleSearch()

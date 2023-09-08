@@ -1,6 +1,7 @@
 import os
 import psutil
 
+
 def log_memory_usage():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()

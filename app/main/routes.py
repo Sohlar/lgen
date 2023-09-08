@@ -1,119 +1,155 @@
-from flask import render_template, url_for, flash, redirect, request, jsonify, abort, current_app
+from flask import (
+    render_template,
+    url_for,
+    flash,
+    redirect,
+    request,
+    jsonify,
+    abort,
+    current_app,
+)
 from flask_login import login_user, logout_user, login_required, current_user
 from app.main import main_bp
-from app.main.forms import LoginForm, TokenPurchaseForm, RegistrationForm, CallToActionForm
-from app.main.models import User, SearchHistory, SearchResult, ContactInfo, Email, Phone
-from app.extensions import db, celery
-from app.services.search_engines import GoogleSearch
-from app.services.search_engine_factory import SearchEngineFactory
-from app.services.utils import search_and_record, drop_non_results
+from app.main.forms import (
+    LoginForm,
+    TokenPurchaseForm,
+    RegistrationForm,
+)
+from app.main.models import User, SearchHistory
+from app.extensions import db
+
+
 from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm
 from .helpers import get_profile_css_class
 from datetime import datetime
-from flask_mail import Mail, Message 
-import time
-from app.extensions import celery
+
+
 from .tasks import search_engine_task, send_email_async, process_purchase
 
 
-import stripe
 TOKENS_PER_RESULT = 1
 
-@main_bp.route('/')
-@main_bp.route('/index', methods=['GET', 'POST'])
+
+@main_bp.route("/")
+@main_bp.route("/index", methods=["GET", "POST"])
 def index():
     """
     Handles requests for the application's home page.
 
     A GET request returns the home page with a blank SearchForm.
 
-    A POST request (i.e., when the SearchForm is submitted) begins the process of a search request. 
+    A POST request (i.e., when the SearchForm is submitted) begins the process of a search request.
     This involves:
     - Forming the search query based on form inputs.
     - Calculating the cost of the search in tokens.
     - Checking if the current user is authenticated. If not, they're redirected to the register page.
     - If the user is authenticated, it checks if they have enough tokens for the search.
         - If they don't, a flash message prompts them to purchase more tokens.
-        - If they do, tokens are deducted from their account, the search query is saved to their 
-          search history, and a search task is enqueued with Celery. The user is also notified that 
+        - If they do, tokens are deducted from their account, the search query is saved to their
+          search history, and a search task is enqueued with Celery. The user is also notified that
           their search request is processing.
 
-    :return: The home page with either a blank or filled-in SearchForm, and possibly a flash message 
+    :return: The home page with either a blank or filled-in SearchForm, and possibly a flash message
              (if a search request was submitted).
     """
     form = SearchForm()
     results = []
     if form.validate_on_submit():
-        my_query = f"{form.query.data}" 
+        my_query = f"{form.query.data}"
         if form.location.data:
-            my_query += (f" {form.location.data}")
+            my_query += f" {form.location.data}"
         if form.radius.data:
-            my_query += (f" within {form.radius.data} miles")
+            my_query += f" within {form.radius.data} miles"
         # Currently only using Bing, but will combine all search together concurrent
-        my_engine = 'google'
+        my_engine = "google"
         desired_results = form.desired_results.data
-        #calculate the cost of the search
+        # calculate the cost of the search
         tok_cost = TOKENS_PER_RESULT * int(desired_results)
         if not current_user.is_authenticated:
-            return redirect(url_for('main.register'))
+            return redirect(url_for("main.register"))
         if current_user.is_authenticated and current_user.tokens is not None:
-            #print('User is auth and not None\n')
-        #check if user has enough
+            # print('User is auth and not None\n')
+            # check if user has enough
             if current_user.tokens >= tok_cost:
-                #print('User has enough Tokens \n')
+                # print('User has enough Tokens \n')
                 current_user.tokens -= tok_cost
                 # Save search history
-                search_history = SearchHistory(user_id=current_user.id, query=my_query, engine=my_engine, timestamp=datetime.utcnow())
+                search_history = SearchHistory(
+                    user_id=current_user.id,
+                    query=my_query,
+                    engine=my_engine,
+                    timestamp=datetime.utcnow(),
+                )
                 db.session.add(search_history)
                 db.session.commit()
                 # Create a search engine using the factory
-                #search_engine = SearchEngineFactory().create_search_engine(my_engine)
+                # search_engine = SearchEngineFactory().create_search_engine(my_engine)
                 # Perform the search and record the results
                 print(current_user.id)
-                search_engine_task.delay(search_history_id=search_history.id, query=my_query,cost=tok_cost, user_id=current_user.id)
-                #search_engine_task('google', search_history.id, my_query, cost)
+                search_engine_task.delay(
+                    search_history_id=search_history.id,
+                    query=my_query,
+                    cost=tok_cost,
+                    user_id=current_user.id,
+                )
+                # search_engine_task('google', search_history.id, my_query, cost)
             else:
-                flash('Not enough tokens. Please purchase more tokens to continue.')
-    return render_template('index3.html', title='Home', form=form)
+                flash("Not enough tokens. Please purchase more tokens to continue.")
+    return render_template("index3.html", title="Home", form=form)
 
 
-@main_bp.route('/search_history', methods=['GET'])
+@main_bp.route("/search_history", methods=["GET"])
 @login_required
 def search_history():
-    search_history = sorted(current_user.search_history, key=lambda x: x.timestamp, reverse=True)
-    return render_template('search_history.html', search_history=search_history, title='Search History', get_profile_css_class=get_profile_css_class)
+    search_history = sorted(
+        current_user.search_history, key=lambda x: x.timestamp, reverse=True
+    )
+    return render_template(
+        "search_history.html",
+        search_history=search_history,
+        title="Search History",
+        get_profile_css_class=get_profile_css_class,
+    )
 
-@main_bp.route('/view_search/<int:search_history_id>', methods=['GET'])
+
+@main_bp.route("/view_search/<int:search_history_id>", methods=["GET"])
 @login_required
 def view_search(search_history_id):
     search_history_item = SearchHistory.query.get_or_404(search_history_id)
     if search_history_item.user_id != current_user.id:
         abort(403)
     search_results = search_history_item.results.all()
-    return render_template('view_search.html', search_history_item=search_history_item, title='View Search', get_profile_css_class=get_profile_css_class)
+    return render_template(
+        "view_search.html",
+        search_history_item=search_history_item,
+        title="View Search",
+        get_profile_css_class=get_profile_css_class,
+    )
 
-@main_bp.route('/profile.html', methods=['GET', 'POST'])
+
+@main_bp.route("/profile.html", methods=["GET", "POST"])
 @login_required
 def profile():
-    return render_template('profile.html', title='Profile', user=current_user)
+    return render_template("profile.html", title="Profile", user=current_user)
 
-@main_bp.route('/register', methods=['GET', 'POST'])
+
+@main_bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for("main.index"))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        #print("User added to the database")
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('main.login'))
-    return render_template('register.html', title='Register', form=form)
+        # print("User added to the database")
+        flash("Congratulations, you are now a registered user!")
+        return redirect(url_for("main.login"))
+    return render_template("register.html", title="Register", form=form)
 
 
-@main_bp.route('/buy_tokens', methods=['GET', 'POST'])
+@main_bp.route("/buy_tokens", methods=["GET", "POST"])
 @login_required
 def buy_tokens():
     """
@@ -126,46 +162,58 @@ def buy_tokens():
     """
     form = TokenPurchaseForm()
 
-    #Check if form is submitted and vlidated
+    # Check if form is submitted and vlidated
     if form.validate_on_submit():
-        #calc token cost  
+        # calc token cost
         num_tokens = form.num_tokens.data * 110
-            #Create a stripe charge for the token purchase
-            
+        # Create a stripe charge for the token purchase
+
         process_purchase.delay(current_user.id, num_tokens, form.stripe_token.data)
-        return jsonify({'status': 'processing', 'message': 'Your purchase is being processed.'})
-    return render_template('buy_tokens.html', title='Buy Tokens', stripe_public_key=current_app.config['PUBLIC_STRIPE_KEY'], form=form)
+        return jsonify(
+            {"status": "processing", "message": "Your purchase is being processed."}
+        )
+    return render_template(
+        "buy_tokens.html",
+        title="Buy Tokens",
+        stripe_public_key=current_app.config["PUBLIC_STRIPE_KEY"],
+        form=form,
+    )
 
 
-
-@main_bp.route('/login', methods=['GET', 'POST'])
+@main_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for("main.index"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect(url_for('main.index'))
+            return redirect(url_for("main.index"))
         else:
-            flash('Invalid username or password')
-    return render_template('login.html', title='Sign In', form=form, get_profile_css_class=get_profile_css_class)
+            flash("Invalid username or password")
+    return render_template(
+        "login.html",
+        title="Sign In",
+        form=form,
+        get_profile_css_class=get_profile_css_class,
+    )
 
-@main_bp.route('/logout')
+
+@main_bp.route("/logout")
 @login_required
 def logout():
-    flash('Successfully logged out')
+    flash("Successfully logged out")
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for("main.index"))
 
 
-@main_bp.route('/admin/add_tokens', methods=['GET','POST'])
+@main_bp.route("/admin/add_tokens", methods=["GET", "POST"])
 @login_required
 def add_tokens():
     if not current_user.is_admin:
         abort(403)
-    
+
     form = AddTokensForm()
 
     if form.validate_on_submit():
@@ -173,15 +221,18 @@ def add_tokens():
         if user:
             user.tokens += form.tokens.data
             db.session.commit()
-            flash(f'{form.tokens.data} tokens added')
+            flash(f"{form.tokens.data} tokens added")
         else:
-            flash('User not found', 'danger')
-        return redirect(url_for('main.add_tokens'))
-    return render_template('add_tokens.html', form=form)
+            flash("User not found", "danger")
+        return redirect(url_for("main.add_tokens"))
+    return render_template("add_tokens.html", form=form)
 
-@main_bp.route('/send_mail', methods=["POST"])
+
+@main_bp.route("/send_mail", methods=["POST"])
 def mail_results():
-    search_result_id = request.json.get('history_id')
+    search_result_id = request.json.get("history_id")
     recipient = "recipient@example.com"  # recipient's email
-    send_email_async.delay(search_result_id, recipient)  # .delay is used to call the task asynchronously
-    return 'Email sending scheduled!', 200
+    send_email_async.delay(
+        search_result_id, recipient
+    )  # .delay is used to call the task asynchronously
+    return "Email sending scheduled!", 200

@@ -9,5 +9,7 @@ from flask_mail import Mail
 db = SQLAlchemy()
 login_manager = LoginManager()
 migrate = Migrate()
-celery = Celery(broker=Config.CELERY['BROKER_URL'], backend=Config.CELERY['RESULT_BACKEND'])
+celery = Celery(
+    broker=Config.CELERY["BROKER_URL"], backend=Config.CELERY["RESULT_BACKEND"]
+)
 mail = Mail
