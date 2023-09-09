@@ -8,3 +8,4 @@ app/app.db
 app/app.db
 *.db
 dump.rdb
+test_env
