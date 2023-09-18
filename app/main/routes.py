@@ -31,7 +31,7 @@ TOKENS_PER_RESULT = 1
 
 
 @main_bp.route("/")
-@main_bp.route("/index", methods=["GET", "POST"])
+@main_bp.route("/", methods=["GET", "POST"])
 def index():
     """
     Handles requests for the application's home page.

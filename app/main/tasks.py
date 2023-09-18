@@ -9,7 +9,6 @@ from app.services.logger import logger
 from app.services.search_3 import GoogleSearch
 import stripe
 
-
 @celery.task(bind=True, name="main.search_engine_task")
 def search_engine_task(self, search_history_id, query, cost, user_id):
     logger.debug("Entering celery task")
