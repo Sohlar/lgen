@@ -227,22 +227,7 @@ def add_tokens():
         return redirect(url_for("main.add_tokens"))
     return render_template("add_tokens.html", form=form)
 
-@main_bp.route("/buy_tokens", methods=["GET", "POST"])
-def buy_tokens():
-    form = TokenPurchaseForm()
-    if form.validate_on_submit():
-        stripe_token = request.form.get('stripeToken')
-        num_tokens = form.num_tokens.data * 110
-        process_purchase.delay(current_user.id, num_tokens, stripe_token)
-        return jsonify(
-            {"status": "processing", "message": "Your purchase is being processed"}    
-        )
-    return render_template(
-        'buy_tokens.html', 
-        title="Buy Tokens",
-        stripe_public_key=current_app.config["STRIPE_PUBLIC_KEY"],
-        form=form,
-    )
+
 
 @main_bp.route("/send_mail", methods=["POST"])
 def mail_results():
