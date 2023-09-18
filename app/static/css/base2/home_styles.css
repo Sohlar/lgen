@@ -2,7 +2,8 @@
 *{
     margin: 0;
     padding: 0;
-    box-sizing: border-box;font-family: 'poppins', sans-serif;
+    box-sizing: border-box;
+    font-family: 'poppins', sans-serif;
 }
 body{
     overflow: auto;
@@ -12,6 +13,9 @@ body{
     width: 100%;
     min-height: 100vh;
     background-color: #0b202b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 nav{
@@ -27,7 +31,7 @@ nav{
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 40px;
+    font-size: 2rem;
     font-weight: 800;
     color: #3d5f5f;
     letter-spacing: 3px;
@@ -36,12 +40,13 @@ nav{
 }
 
 b{
-    font-size: 70px;
+    font-size: 4rem;
     color: #7f00ff;
 }
 
 .navItems{
     display: flex;
+    flex-wrap: wrap;
 }
 
 .navItems li{
@@ -50,7 +55,7 @@ b{
 }
 
 .navItems li a{
-    font-size: 25px;
+    font-size: 1.5rem;
     color: #3d535f;
     letter-spacing: 3px;
     text-decoration: none;
@@ -62,7 +67,7 @@ b{
 }
 
 .links a{
-    font-size:30px;
+    font-size: 2rem;
     color:#3d535f;
     margin: 25px 10px;
 }
@@ -79,7 +84,8 @@ b{
 
 
 .cols{
-    width: 50%;
+    width: 100%;
+    max-width: 600px;
 }
 
 .cols0{
@@ -90,7 +96,7 @@ b{
 .topline{
     display: block;
     position: relative;
-    font-size: 35px;
+    font-size: 2rem;
     letter-spacing: 5px;
     color: #3d535f;
 }
@@ -106,7 +112,7 @@ b{
 
 h1{
     display: block;
-    font-size: 7em;
+    font-size: 4em;
     font-weight: 900;
     color:#3d535f;
 }
@@ -132,7 +138,7 @@ button{
     outline: none;
     border: none;
     cursor: pointer;
-    font-size: 25px;
+    font-size: 1.5rem;
     font-weight: 400;
     color: #fff;
     background-color:#3d535f;
@@ -145,5 +151,3 @@ button{
 button:hover{
     background-color:#7f00ff;
 }
-
-
