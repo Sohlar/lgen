@@ -151,3 +151,30 @@ button{
 button:hover{
     background-color:#7f00ff;
 }
+
+@media only screen and (max-width: 600px) {
+    .Logo{
+        font-size: 1.5rem;
+    }
+    b{
+        font-size: 3rem;
+    }
+    .navItems li a{
+        font-size: 1.2rem;
+    }
+    .links a{
+        font-size: 1.5rem;
+    }
+    .topline{
+        font-size: 1.5rem;
+    }
+    h1{
+        font-size: 3em;
+    }
+    p{
+        font-size: 1em;
+    }
+    button{
+        font-size: 1.2rem;
+    }
+}
