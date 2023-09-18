@@ -227,7 +227,7 @@ def add_tokens():
         return redirect(url_for("main.add_tokens"))
     return render_template("add_tokens.html", form=form)
 
-@main_bp.routes("/buy_tokens", methods=["GET", "POST"])
+@main_bp.route("/buy_tokens", methods=["GET", "POST"])
 def buy_tokens():
     form = TokenPurchaseForm()
     if form.validate_on_submit():
