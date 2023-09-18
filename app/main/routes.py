@@ -18,7 +18,7 @@ from app.main.forms import (
 from app.main.models import User, SearchHistory
 from app.extensions import db
 
-
+from os import environ
 from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm
 from .helpers import get_profile_css_class
 from datetime import datetime
@@ -175,7 +175,7 @@ def buy_tokens():
     return render_template(
         "buy_tokens.html",
         title="Buy Tokens",
-        stripe_public_key=current_app.config["PUBLIC_STRIPE_KEY"],
+        stripe_public_key=environ.get("PUBLIC_STRIPE_KEY"),
         form=form,
     )
 
