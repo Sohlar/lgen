@@ -76,26 +76,6 @@ b{
     padding: 0;
     overflow: hidden;
 }
-.wrapper::before{
-    position: absolute;
-    content: "";
-    height: 600px;
-    width: 600px;
-    border-radius: 50%;
-    left: -12%;
-    top: 40%;
-    background: linear-gradient(45deg, #7f00ff, pink);
-}
-.wrapper::after{
-    position: absolute;
-    content: "";
-    height: 200px;
-    width: 200px;
-    border-radius: 50%;
-    left: 35%;
-    top: 12%;
-    background: linear-gradient(45deg, #7f00ff, pink);
-}
 
 
 .cols{
