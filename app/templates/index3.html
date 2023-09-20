@@ -1,5 +1,81 @@
 {% extends 'base2.html' %}
+{% block css %}
+    <style>
 
+        .wrapper {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .cols {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .cols0 {
+            background-color: #162447; /* darker blue */
+            color: #c0c0c0; /* grey */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .btns button {
+            background-color: #1f4068; /* even darker blue */
+            color: #e0e0e0; /* light grey */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btns button:hover {
+            background-color: #e43f5a; /* contrast color */
+        }
+
+        footer {
+            background-color: #162447; /* darker blue */
+            color: #c0c0c0; /* grey */
+            padding: 20px 0;
+        }
+
+        footer a {
+            color: #e0e0e0; /* light grey */
+        }
+
+        footer a:hover {
+            color: #e43f5a; /* contrast color */
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .wrapper {
+                padding: 10px;
+            }
+
+            .cols {
+                flex-direction: column;
+            }
+
+            .cols0 {
+                margin-bottom: 20px;
+            }
+
+            footer .row {
+                flex-direction: column-reverse;
+            }
+
+            footer .col-lg-6 {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+    
+    </style>
+{%endblock%}
 {% block content %}
     
 
@@ -55,12 +131,8 @@
     {% endif %}
     </div>
 </div>
-
- 
-
     <!-- Footer-->
     <footer class="footer bg-dark">
-        
         <div class="row">
             <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
                 <h4 class="text-uppercase mb-4">About Databox</h4>
@@ -74,17 +146,7 @@
                     </li>
                 </ul>
             </div>
-        </div>
-        
+        </div> 
     </footer>
-    <!-- Bootstrap core JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>
-    <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-    <!-- * *                               SB Forms JS                               * *-->
-    <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-    <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
 
 {% endblock %}
