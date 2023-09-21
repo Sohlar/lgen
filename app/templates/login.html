@@ -1,16 +1,64 @@
 {% extends 'base2.html' %}
 
 {% block title %}Login - Contact Info Finder{% endblock %}
+{% block css %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap');
 
+  .loginContainer { 
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    background-color: #0b202b;
+    color: #7f00ff;
+    border-radius: 5px;
+   
+  }
+
+  .card-header {
+    background-color: #3d535f;
+    color: #fff;
+  }
+
+  .form-control {
+    background-color: #1a1a2e;
+    color: #7f00ff;
+    border: none;
+  }
+
+  .form-control::placeholder {
+    color: #7f00ff;
+  }
+
+  .form-actions .btn {
+    background-color: #7f00ff;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .form-actions .btn:hover {
+    background-color: #7f00ff;
+  }
+
+  @media only screen and (max-width: 768px) {
+    .container {
+      padding: 10px;
+    }
+  }
+</style>
+{% endblock %}
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h4>Login</h4>
-        </div>
+
+<div class="loginContainer">
+ 
+   
+      <div class="card"> 
         <div class="card-body">
           <form method="POST" action="{{ url_for('main.login') }}">
             {{ form.hidden_tag() }}
@@ -36,10 +84,9 @@
               {{ form.submit(class="btn btn-check-submit") }}
             </div>
           </form>
-          <p>Don't have an account? <a href="{{ url_for('main.register') }}">Register</a></p>
         </div>
       </div>
-    </div>
-  </div>
+    
+  
 </div>
 {% endblock %}

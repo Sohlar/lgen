@@ -3,30 +3,73 @@
     <style>
 
         .wrapper {
-            max-width: 960px;
+            width: 100%;
             margin: 0 auto;
             padding: 20px;
         }
+        .form-group {
+            overflow: hidden;
+            margin-bottom: 0;
+            padding: 15px 15px;
+            border-bottom: none;
+            position: relative;
+            background: #edf2f5;
+            border-bottom: 1px solid #e6edf1;
+        }
+        .form-group label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: .3s all ease;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 0;
+            color: #b3b3b3;
+        }
 
+        .form-group input {
+            background: transparent;
+            border: none;
+            padding: 0;
+            font-size: 20px;
+            border-radius: 0;
+        }
+
+        .form-group input:active, .form-group input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .form-group.focus {
+            background: #fff;
+        }
+        
+
+        .form-group.field--not-empty label {
+            margin-top: -20px;
+        }
+
+        .btn {
+            height: 54px;
+            padding-left: 30px;
+            padding-right: 30px;
+            background-color: white;
+        }
+
+        .btn:hover {
+            background-color: #7f00ff;;
+        }
         .cols {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-        }
-
-        .cols0 {
-            background-color: #162447; /* darker blue */
-            color: #c0c0c0; /* grey */
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            width: 100vh;
         }
 
         .btns button {
             background-color: #1f4068; /* even darker blue */
             color: #e0e0e0; /* light grey */
             border: none;
-            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
@@ -80,50 +123,52 @@
     
 
 <div class="wrapper">
-
-<!--     <div class="cube">
-        <div class="face"></div>
-        <div class="face"></div>
-        <div class="face"></div>
-        <div class="face"></div>
-        <div class="face"></div>
-        <div class="face"></div>
-    </div> -->
     {% if not current_user.is_authenticated %}
     <div class="cols cols0">
         <span class="topline">Hello</span>
         <h1>We are <span class="multiText">Lead Generation</span></h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi 
-            ut aliquip ex ea commodo consequat.</p>
-        <div class="btns">
-            <button id="submitButton" type="submit">Signup</button>
-        </div>
+        <p>This project is a sophisticated lead generation platform, 
+            leveraging the power of artificial intelligence to provide 
+            high-quality leads for businesses. Our platform is designed 
+            to be user-friendly and highly efficient, making lead generation 
+            a seamless process for our users.</p>
     </div>
     {% endif %}
     {% if current_user.is_authenticated %}
 <!--     <div class="cols cols0">
         <h1>We are <span class="multiText">Lead Generation</span></h1>
     </div>   -->
+    <div class="cols cols0">
+        <h1>Find your <span class="multiText">Customers</span></h1>
+        <p>We search the entire web to find potential leads for your business. Each <span class="multiText">token</span> is an automated spider digesting web content based on your query.
+        Some <span class="multiText">spiders</span> die on their journey, others find <span class="multiText">more than you expected!</span></p>
+    </div>
     <form action="{{ url_for('main.index') }}" method="POST">
         {{ form.csrf_token }}
         <div class='row g-4'>
             <div class="col-md-3 cols0">
-                {{ form.query.label(for='query', class='form-label text-white') }}
-                {{ form.query(class='form-control', id='query', placeholder='') }}
+                <div class="form-group">
+                    {{ form.query.label(for='query', class='form-label text-white') }}
+                    {{ form.query(class='form-control input-field', id='query') }}
+                </div>
             </div>
             <div class="col-md-3 cols0">
-                {{ form.desired_results.label(for='desired_results', class='form-label text-white') }}
-                {{ form.desired_results(class='form-control', id='desired_results', placeholder='10', min='10') }}
+                <div class="form-group">
+                    {{ form.desired_results.label(for='desired_results', class='form-label text-white') }}
+                    {{ form.desired_results(class='form-control input-field', id='desired_results') }}
+                </div>
             </div>
             <div class="col-md-3 cols0">
-                {{ form.location.label(for='location', class='form-label text-white') }}
-                {{ form.location(class='form-control', id='location', placeholder='') }}
+                <div class="form-group">
+                    {{ form.location.label(for='location', class='form-label text-white') }}
+                    {{ form.location(class='form-control input-field', id='location', placeholder='') }}
+                </div>
             </div>
             <div class="col-md-3 cols0">
-                {{ form.radius.label(for='radius', class='form-label text-white') }}
-                {{ form.radius(class='form-control', id='radius', placeholder='', min='10', max ='50') }}
+                <div class="form-group">
+                    {{ form.radius.label(for='radius', class='form-label text-white') }}
+                    {{ form.radius(class='form-control input-field', id='radius') }}
+                </div>
             </div>
         </div>
         {{ form.submit(class='btn btn-primary') }}
@@ -131,22 +176,36 @@
     {% endif %}
     </div>
 </div>
-    <!-- Footer-->
-    <footer class="footer bg-dark">
-        <div class="row">
-            <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
-                <h4 class="text-uppercase mb-4">About Databox</h4>
-                <p class="lead mb-0">Databox is a company dedicated to harnessing AI for superior lead generation. We provide intelligent and scalable solutions for businesses of all sizes.</p>
-                <p class="text-muted small mb-4 mb-lg-0">&copy; Databox 2023. All Rights Reserved.</p>
-            </div>
-            <div class="col-lg-6 h-100 text-center text-lg-end my-auto">
-                <ul class="list-inline mb-0">
-                    <li class="list-inline-item me-4">
-                        <a href="#!"><i class="bi-twitter fs-3"></i></a>
-                    </li>
-                </ul>
-            </div>
-        </div> 
-    </footer>
+ <!-- Footer-->
+<footer class="footer bg-dark">
+    <div class="row">
+        <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
+            <h4 class="text-uppercase mb-4">About Databox</h4>
+            <p class="lead mb-0">Databox is a company dedicated to harnessing AI for superior lead generation. We provide intelligent and scalable solutions for businesses of all sizes.</p>
+            <p class="text-muted small mb-4 mb-lg-0">&copy; Databox 2023. All Rights Reserved.</p>
+        </div>
+        <div class="col-lg-6 h-100 text-center text-lg-end my-auto">
+            <ul class="list-inline mb-0">
+                <li class="list-inline-item me-4">
+                    <a href="#!"><i class="bi-twitter fs-3"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div> 
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var inputFields = document.querySelectorAll('.input-field');
+        inputFields.forEach(function (input) {
+            input.addEventListener('input', function () {
+                if (this.value) {
+                    this.parentElement.classList.add('field--not-empty');
+                } else {
+                    this.parentElement.classList.remove('field--not-empty');
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock %}

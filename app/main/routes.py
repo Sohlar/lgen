@@ -64,7 +64,7 @@ def index():
         my_engine = "google"
         desired_results = form.desired_results.data
         # calculate the cost of the search
-        tok_cost = TOKENS_PER_RESULT * int(desired_results)
+        tok_cost = TOKENS_PER_RESULT * desired_results
         if not current_user.is_authenticated:
             return redirect(url_for("main.register"))
         if current_user.is_authenticated and current_user.tokens is not None:

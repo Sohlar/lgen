@@ -1,25 +1,182 @@
 {% extends 'base2.html' %}
+{% block css %}
+    <style>
 
-{% block title %}Buy Tokens{% endblock %}
+        .wrapper {
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            overflow: hidden;
+            margin-bottom: 0;
+            padding: 15px 15px;
+            border-bottom: none;
+            position: relative;
+            background: #edf2f5;
+            border-bottom: 1px solid #e6edf1;
+        }
+        .form-group label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: .3s all ease;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 0;
+            color: #b3b3b3;
+        }
 
+        .form-group input {
+            background: transparent;
+            border: none;
+            padding: 0;
+            font-size: 20px;
+            border-radius: 0;
+        }
+
+        .form-group input:active, .form-group input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .form-group.focus {
+            background: #fff;
+        }
+        
+
+        .form-group.field--not-empty label {
+            margin-top: -20px;
+        }
+
+        .btn {
+            height: 54px;
+            padding-left: 30px;
+            padding-right: 30px;
+            background-color: white;
+        }
+
+        .btn:hover {
+            background-color: #7f00ff;;
+        }
+        .cols {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100vh;
+        }
+
+        .btns button {
+            background-color: #1f4068; /* even darker blue */
+            color: #e0e0e0; /* light grey */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btns button:hover {
+            background-color: #e43f5a; /* contrast color */
+        }
+
+        footer {
+            background-color: #162447; /* darker blue */
+            color: #c0c0c0; /* grey */
+            padding: 20px 0;
+        }
+
+        footer a {
+            color: #e0e0e0; /* light grey */
+        }
+
+        footer a:hover {
+            color: #e43f5a; /* contrast color */
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .wrapper {
+                padding: 10px;
+            }
+
+            .cols {
+                flex-direction: column;
+            }
+
+            .cols0 {
+                margin-bottom: 20px;
+            }
+
+            footer .row {
+                flex-direction: column-reverse;
+            }
+
+            footer .col-lg-6 {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+    
+    </style>
+{%endblock%}
 {% block content %}
-  <h1>Buy Tokens</h1>
-  <script src="https://js.stripe.com/v3/"></script>
-  <form action="{{ url_for('main.buy_tokens')}}" method="POST" id="payment-form">
-    {{form.hidden_tag() }}
-    <div class="col-md-3">
-      {{ form.num_tokens.label(class="form-label") }}
-      {{ form.num_tokens(class="form-control") }}
-    </div>
-    <div class="col-md-3">
-      <label for="card-element" class="form-label">Credit or Debit Card</label>
-      <div id="card-element" class="form-control">
-        <!-- A Stripe Element will be inserted here. -->
-      </div>
-      <!-- Used to display form errors. -->
-      <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-    </div>
-    <button type="submit" class="col-md-3 btn-primary">Purchase</button>
-  </form>
+    
+
+<div class="wrapper">
+    <form action="{{ url_for('main.buy_tokens')}}" method="POST" id="payment-form">
+        {{form.hidden_tag() }}
+        <div class='row g-4'>
+            <div class="col-md-3 cols0">
+                <div class="form-group">
+                    {{ form.num_tokens.label(for='num_tokens', class='form-label text-white') }}
+                    {{ form.num_tokens(class='form-control input-field', id='num_tokens') }}
+                </div>
+            </div>
+            <div class="col-md-3 cols0">
+                <div class="form-group">
+                    <label for="card-element" class="form-label text-white">Credit or Debit Card</label>
+                    <div id="card-element" class="form-control">
+                        <!-- A Stripe Element will be inserted here. -->
+                    </div>
+                    <!-- Used to display form errors. -->
+                    <div id="card-errors" role="alert" class="text-danger mt-2"></div>
+                </div>
+            </div>
+        </div>
+        {{ form.submit(class='btn btn-primary') }}
+    </form>
+</div>
+ <!-- Footer-->
+<footer class="footer bg-dark">
+    <div class="row">
+        <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
+            <h4 class="text-uppercase mb-4">About Databox</h4>
+            <p class="lead mb-0">Databox is a company dedicated to harnessing AI for superior lead generation. We provide intelligent and scalable solutions for businesses of all sizes.</p>
+            <p class="text-muted small mb-4 mb-lg-0">&copy; Databox 2023. All Rights Reserved.</p>
+        </div>
+        <div class="col-lg-6 h-100 text-center text-lg-end my-auto">
+            <ul class="list-inline mb-0">
+                <li class="list-inline-item me-4">
+                    <a href="#!"><i class="bi-twitter fs-3"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div> 
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var inputFields = document.querySelectorAll('.input-field');
+        inputFields.forEach(function (input) {
+            input.addEventListener('input', function () {
+                if (this.value) {
+                    this.parentElement.classList.add('field--not-empty');
+                } else {
+                    this.parentElement.classList.remove('field--not-empty');
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock %}
+
