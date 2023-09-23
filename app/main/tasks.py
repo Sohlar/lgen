@@ -11,7 +11,7 @@ import stripe
 
 @celery.task(bind=True, name="main.search_engine_task")
 def search_engine_task(self, search_history_id, query, cost, user_id):
-    logger.debug("Entering celery task")
+    logger.debug("Entering celery task\n\n")
 
     # results = SearchEngineFactory.create_search_engine(engine=engine_str).search(query=query, num_urls = cost)
 
@@ -19,7 +19,7 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
 
     results = list(gs.search(query, num_urls=cost))
 
-    logger.debug("Search ended *\ Adding Results to DB")
+    logger.debug("Search ended *\ Adding Results to DB\n")
 
     try:
         all_emails = []
@@ -39,12 +39,12 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
                 search_result = SearchResult(
                     search_history_id=search_history_id, url=result["url"]
                 )
-                logger.debug(f"*Search Result: {search_result}")
+                logger.debug(f"*Search Result:\n {search_result}")
                 db.session.add(search_result)
                 db.session.flush()  # Flush the session to get the id of search_result
 
                 contact_info = ContactInfo(search_result_id=search_result.id)
-                logger.debug(f"*Contact Info: {contact_info}")
+                logger.debug(f"*Contact Info:\n {contact_info}")
                 db.session.add(contact_info)
                 db.session.flush()  # Flush the session to get the id of contact_info
 

@@ -82,11 +82,7 @@ class GoogleSearch:
         except EmailNotValidError:
             return False
 
-    def find_phone_numbers(self, content, default_region="US", is_html=False):
-        if is_html:
-            soup = BeautifulSoup(content, "html.parser")
-            content = soup.get_text()
-
+    def find_phone_numbers(self, content, default_region="US"):
         content = self.preprocess_text(content=content)
 
         valid_numbers = [
@@ -104,9 +100,12 @@ class GoogleSearch:
 
         if url_content is None:
             return {"email": None, "phone": None, "url": url}
+        
+        soup = BeautifulSoup(url_content, "html.parser")
+        text_content = soup.get_text()
 
-        email = self.find_email_addresses(content=url_content)
-        phone = self.find_phone_numbers(content=url_content, is_html=True)
+        email = self.find_email_addresses(content=text_content)
+        phone = self.find_phone_numbers(content=text_content)
         return {"email": email, "phone": phone, "url": url}
 
 
