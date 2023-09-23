@@ -49,6 +49,7 @@ class GoogleSearch:
                 print("No Items in the Response")
 
     def get_page_content(self, url):
+        logger.debug("\n\nEntered get_page_content()\n\n")
         try:
             response = requests.get(url)
             if response.status_code == 200:
@@ -62,17 +63,22 @@ class GoogleSearch:
             return None
 
     def preprocess_text(self, content):
+        logger.debug("Entered preprocess_text()")
         content = content.replace("\n", " ")
         content = re.sub(r"\s+", " ", content)
+        logger.debug("Returning preprocess_text()")
         return content
 
     def find_email_addresses(self, content):
+        logger.debug("\nCompiling Email Regex\n")
         email_pattern = re.compile(
             r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
         )
+        logger.debug("finding all emails")
         emails = email_pattern.findall(content)
 
         valid_emails = [email for email in emails if self.is_valid_email(email)]
+        logger.debug("Returning from find_email_addresses()")
         return valid_emails
 
     def is_valid_email(self, email):
@@ -83,8 +89,10 @@ class GoogleSearch:
             return False
 
     def find_phone_numbers(self, content, default_region="US"):
+        logger.debug("\nPreprocessing Text")
         content = self.preprocess_text(content=content)
 
+        logger.debug("Phone Uncertainty")
         valid_numbers = [
             self.format_number(match.number)
             for match in phonenumbers.PhoneNumberMatcher(content, default_region)
@@ -93,6 +101,7 @@ class GoogleSearch:
         return valid_numbers
 
     def format_number(self, number):
+        logger.debug("Entered format number")
         return phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
 
     def _find_contact_info(self, url):
@@ -100,12 +109,17 @@ class GoogleSearch:
 
         if url_content is None:
             return {"email": None, "phone": None, "url": url}
-        
+        logger.debug("\nPreparing to Soup\n")
         soup = BeautifulSoup(url_content, "html.parser")
+        logger.debug("\nContent Souped\n")
         text_content = soup.get_text()
+        logger.debug("Soup turned to text")
 
+        logger.debug("Preparting to find emails")
         email = self.find_email_addresses(content=text_content)
+        logger.debug("Preparting to find emails")
         phone = self.find_phone_numbers(content=text_content)
+        logger.debug("Returning from _find_contact_info()")
         return {"email": email, "phone": phone, "url": url}
 
 
