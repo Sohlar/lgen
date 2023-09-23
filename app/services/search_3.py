@@ -5,6 +5,7 @@ import re
 from bs4 import BeautifulSoup
 import phonenumbers
 from email_validator import validate_email, EmailNotValidError
+from app.services.logger import logger
 
 
 # Import API keys from config.py
@@ -14,6 +15,7 @@ from .config import GOOG_API_KEY, GOOGLE_CX
 
 class GoogleSearch:
     def search(self, query, start_index=10, num_urls=9):
+        logger.debug("Starting Google Search")
         for start in range(start_index, start_index + num_urls, 10):
             base_url = "https://www.googleapis.com/customsearch/v1"
             params = {
@@ -23,19 +25,27 @@ class GoogleSearch:
                 "start": start,
                 "num": 10,
             }
+            logger.debug(f"Parameters set: {params}")
 
             headers = {
                 "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1",
                 "Accept-Encoding": "gzip",
             }
+            logger.debug(f"Headers set: {headers}")
             response = requests.get(url=base_url, params=params, headers=headers)
+            logger.debug("Request sent")
             data = response.json()
+            logger.debug("Response received and parsed")
             if "items" in data:
                 for item in data["items"]:
+                    logger.debug(f"Processing item: {item}")
                     yield self._find_contact_info(url=item["link"])
                     item.clear()  # Clear each item after yielding
+                    logger.debug("Item processed and cleared")
                 del data["items"]
+                logger.debug("All items processed")
             else:
+                logger.error("No Items in the Response")
                 print("No Items in the Response")
 
     def get_page_content(self, url):
