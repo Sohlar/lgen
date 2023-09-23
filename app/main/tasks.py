@@ -53,14 +53,24 @@ def search_engine_task(self, search_history_id, query, cost, user_id):
                     logger.debug(f"*/ Email Added: {email}")
                     db.session.add(email)
                     db.session.flush()  # Flush the session to get the id of email
+                logger.debug("Emails added")
 
                 for phone_addr in phones:
                     phone = Phone(contact_info_id=contact_info.id, phone=phone_addr)
                     logger.debug(f"*/ Phone Added: {phone}")
                     db.session.add(phone)
                     db.session.flush()  # Flush the session to get the id of phone
+                logger.debug("Phones added")
 
         db.session.commit()
+        logger.debug("_---------------")
+        logger.debug("Search and Record Finished")
+        logger.debug("_---------------")
+        logger.debug("_---------------")
+        logger.debug("Initializing email")
+        logger.debug("_---------------")
+
+
 
         # Send result emails after the search is complete
         user = User.query.get(user_id)
@@ -152,6 +162,7 @@ def create_stripe_charge(amount, token, username):
 
 @celery.task
 def send_email_async(search_data, recipient):
+    logger.debug("\n\nEntered send_email_async()\n\n")
     if search_data:
         # Directly access the emails, phones, and urls from the dictionary
         emails = search_data.get("emails", [])
