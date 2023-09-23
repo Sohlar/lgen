@@ -162,30 +162,36 @@ def create_stripe_charge(amount, token, username):
 
 @celery.task
 def send_email_async(search_data, recipient):
-    logger.debug("\n\nEntered send_email_async()\n\n")
+    logger.debug("Entered send_email_async()")
     if search_data:
+        logger.debug("Search data found")
         # Directly access the emails, phones, and urls from the dictionary
         emails = search_data.get("emails", [])
         phones = search_data.get("phones", [])
         urls = search_data.get("urls", [])
 
         if emails or phones or urls:
+            logger.debug("Emails, phones, or URLs found in search data")
             msg = Message("Search Result", recipients=[recipient])  # recipient's email
             msg.body = "Here is your search result: \n"
 
             # Add URLs, emails, and phones to the email body
             if urls:
+                logger.debug("URLs found in search data")
                 msg.body += f"URLs: {', '.join(urls)}\n"
             if emails:
+                logger.debug("Emails found in search data")
                 msg.body += f"Emails: {', '.join(emails)}\n"
             if phones:
+                logger.debug("Phones found in search data")
                 msg.body += f"Phones: {', '.join(phones)}"
 
+            logger.debug("Sending email")
             mail.send(msg)
         else:
-            print("No emails, phones, or URLs found in search data")
+            logger.warning("No emails, phones, or URLs found in search data")
     else:
-        print("No search data provided")
+        logger.warning("No search data provided")
 
 
 """ @celery.task
