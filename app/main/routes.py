@@ -165,7 +165,8 @@ def buy_tokens():
     # Check if form is submitted and vlidated
     if form.validate_on_submit():
         # calc token cost
-        num_tokens = form.num_tokens.data * 110
+        num_tokens = form.num_tokens.data 
+        cost_per_token = 0.1
         # Create a stripe charge for the token purchase
 
         process_purchase.delay(current_user.id, num_tokens, form.stripe_token.data)
@@ -176,6 +177,7 @@ def buy_tokens():
         "buy_tokens.html",
         title="Buy Tokens",
         stripe_public_key=environ.get("PUBLIC_STRIPE_KEY"),
+        cost_per_token=cost_per_token,
         form=form,
     )
 

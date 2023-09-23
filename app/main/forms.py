@@ -28,15 +28,11 @@ class TokenPurchaseForm(FlaskForm):
     num_tokens = StringField(
         "Number of tokens", validators=[DataRequired(), NumberRange(min=10)]
     )
+    card_details = StringField("Card Details", validators=[DataRequired()])
     cost = StringField("Cost", render_kw={'readonly': True})
-    stripe_tokens = StringField("Stripe Token", validators=[DataRequired()])
     submit = SubmitField("Purchase")
-    
-    def validate(self):
-        if not FlaskForm.validate(self):
-            return False
-        self.cost.data = str(int(self.num_tokens.data) / 10) + "$"
-        return True
+
+
 
 
 class RegistrationForm(FlaskForm):

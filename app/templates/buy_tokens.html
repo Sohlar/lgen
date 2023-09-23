@@ -65,6 +65,9 @@
             gap: 20px;
             width: 100vh;
         }
+        .cols0 {
+          margin-bottom: 20px;
+        }
 
         .btns button {
             background-color: #1f4068; /* even darker blue */
@@ -123,28 +126,30 @@
     
 
 <div class="wrapper">
-    <form action="{{ url_for('main.buy_tokens')}}" method="POST" id="payment-form">
-        {{form.hidden_tag() }}
-        <div class='row g-4'>
-            <div class="col-md-3 cols0">
-                <div class="form-group">
-                    {{ form.num_tokens.label(for='num_tokens', class='form-label text-white') }}
-                    {{ form.num_tokens(class='form-control input-field', id='num_tokens') }}
-                </div>
+  <form action="{{ url_for('main.buy_tokens')}}" method="POST" id="payment-form">
+      {{form.hidden_tag() }}
+      <div class='row g-4'>
+          <div class="col-md-3 cols0">
+            <div class="form-group">
+                {{ form.num_tokens.label(for='num_tokens', class='form-label text-white') }}
+                {{ form.num_tokens(class='form-control input-field', id='num_tokens', data_cost_per_token=cost_per_token) }}
             </div>
-            <div class="col-md-3 cols0">
-                <div class="form-group">
-                    <label for="card-element" class="form-label text-white">Credit or Debit Card</label>
-                    <div id="card-element" class="form-control">
-                        <!-- A Stripe Element will be inserted here. -->
-                    </div>
-                    <!-- Used to display form errors. -->
-                    <div id="card-errors" role="alert" class="text-danger mt-2"></div>
-                </div>
+          </div>
+          <div class="col-md-3 cols0">
+            <div class="form-group">
+                {{ form.card_details.label(for='card_details', class='form-label text-white') }}
+                {{ form.card_details(class='form-control input-field', id='card_details') }}
             </div>
-        </div>
-        {{ form.submit(class='btn btn-primary') }}
-    </form>
+          </div>
+          <div class="col-md-3 cols0">
+            <div class="form-group">
+              {{ form.cost.label(for='cost', class='form-label text-white') }}
+              {{ form.cost(class='form-control', id='cost', readonly=true) }}
+            </div>
+          </div>
+      </div>
+      {{ form.submit(class='btn btn-primary') }}
+  </form>
 </div>
  <!-- Footer-->
 <footer class="footer bg-dark">
@@ -176,6 +181,16 @@
             });
         });
     });
+</script>
+
+<script>
+  document.getElementById('num_tokens').addEventListener('input', function (e) {
+    var costPerToken = parseFloat(e.target.getAttribute('data-cost-per-token'));
+    var numTokens = parseInt(e.target.value);
+    console.log('costPerToken:', costPerToken);
+    console.log('numTokens:', numTokens);
+    document.getElementById('cost').value = costPerToken * numTokens;
+  });
 </script>
 
 {% endblock %}
