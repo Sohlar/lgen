@@ -111,7 +111,6 @@ def search_history():
         get_profile_css_class=get_profile_css_class,
     )
 
-
 @main_bp.route("/view_search/<int:search_history_id>", methods=["GET"])
 @login_required
 def view_search(search_history_id):
@@ -125,7 +124,6 @@ def view_search(search_history_id):
         title="View Search",
         get_profile_css_class=get_profile_css_class,
     )
-
 
 @main_bp.route("/profile.html", methods=["GET", "POST"])
 @login_required

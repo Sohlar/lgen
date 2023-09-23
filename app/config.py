@@ -19,6 +19,7 @@ class Config:
     CELERY = {
         "BROKER_URL": os.environ["REDIS_TLS_URL"] + "?ssl_cert_reqs=CERT_NONE",
         "RESULT_BACKEND": os.environ["REDIS_TLS_URL"] + "?ssl_cert_reqs=CERT_NONE",
+        "broker_connection_retry_on_startup": True,
     }
     MAIL_SERVER = "smtp.googlemail.com"
     MAIL_PORT = 587
