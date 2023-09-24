@@ -38,7 +38,7 @@ class GoogleSearch:
             logger.debug("Response received and parsed")
             if "items" in data:
                 for item in data["items"]:
-                    logger.debug(f"Processing item: {item}")
+                    logger.debug(f"Entering _find_contact_info()")
                     yield self._find_contact_info(url=item["link"])
                     item.clear()  # Clear each item after yielding
                     logger.debug("Item processed and cleared")
@@ -58,8 +58,10 @@ class GoogleSearch:
                 print(f"Error: {response.status_code}")
                 print(f"Reason: {response.reason}")
                 return None
+        except (SystemExit, KeyboardInterrupt):
+            raise
         except Exception as e:
-            print(f"Error: {e}")
+            logger.debug(f"Error: {e}")
             return None
 
     def preprocess_text(self, content):
@@ -106,7 +108,7 @@ class GoogleSearch:
 
     def _find_contact_info(self, url):
         url_content = self.get_page_content(url=url)
-
+        logger.debug("Retrieved page content succesfully")
         if url_content is None:
             return {"email": None, "phone": None, "url": url}
         logger.debug("\nPreparing to Soup\n")
