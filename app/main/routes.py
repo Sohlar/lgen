@@ -160,11 +160,11 @@ def buy_tokens():
     """
     form = TokenPurchaseForm()
 
+    cost_per_token = 0.1
     # Check if form is submitted and vlidated
     if form.validate_on_submit():
         # calc token cost
         num_tokens = form.num_tokens.data 
-        cost_per_token = 0.1
         # Create a stripe charge for the token purchase
 
         process_purchase.delay(current_user.id, num_tokens, form.stripe_token.data)
