@@ -69,7 +69,7 @@
           margin-bottom: 20px;
         }
 
-        .btns button {
+        .btns button { 
             background-color: #1f4068; /* even darker blue */
             color: #e0e0e0; /* light grey */
             border: none;
@@ -190,7 +190,35 @@
     console.log('costPerToken:', costPerToken);
     console.log('numTokens:', numTokens);
     document.getElementById('cost').value = costPerToken * numTokens;
+
+    var costLabel = document.querySelector("label[for='cost']");
+
+    if (document.getElementById('cost').value) {
+        costLabel.style.transform = 'translateY(-50%)'
+    } else {
+        costLabel.style.transform = 'translateY(0)'
+    }
   });
+  document.addEventListener('DOMContentLoaded', function() {
+    var inputfields = document.querySelectorAll('input-field');
+
+    inputfields.forEach(function(input) {
+        //init check
+        if (input.value) {
+            input.parentElement.querySelector('label').style.transform = 'translateY('-50%')'
+        }
+
+        input.addEventListener('input', function() {
+            if (this.value) {
+                this.parentElement.classList.add('field--not-empty')
+                this.parentElement.querySelector('label').style.transform = 'translateY(-50%)'
+            } else {
+                this.parentElement.classList.remove('field--not-empty')
+                this.parentElement.querySelector('label').style.transform = 'translateY(-50%)'
+            }
+        })
+    })
+  })
 </script>
 
 {% endblock %}
