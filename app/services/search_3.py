@@ -51,15 +51,21 @@ class GoogleSearch:
     def get_page_content(self, url):
         logger.debug("\n\nEntered get_page_content()\n\n")
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=3)
+            logger.debug("\n\nResponse Confirmed\n\n")
             if response.status_code == 200:
+                logger.debug("\n Returning Response Text\n")
                 return response.text
             else:
                 print(f"Error: {response.status_code}")
                 print(f"Reason: {response.reason}")
                 return None
-        except (SystemExit, KeyboardInterrupt):
+        except (SystemExit):
+            logger.debug("\n\nSysExit\n\n")
             raise
+        except (requests.exceptions.Timeout):
+            logger.debug("\n\nTimeout Error\n\n")
+            return None
         except Exception as e:
             logger.debug(f"Error: {e}")
             return None
