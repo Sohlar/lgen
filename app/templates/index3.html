@@ -63,7 +63,10 @@
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            width: 100vh;
+            width: 100%;
+        }
+        .cols0 {
+            margin-bottom: 20px;
         }
 
         .btns button {
@@ -97,6 +100,10 @@
         @media (max-width: 768px) {
             .wrapper {
                 padding: 10px;
+                flex-direction: column;
+            }
+            .row {
+                flex-direction: column;
             }
 
             .cols {
@@ -117,7 +124,6 @@
         }
     </style>
     
-    </style>
 {%endblock%}
 {% block content %}
     

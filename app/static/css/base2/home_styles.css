@@ -64,6 +64,7 @@ b{
 
 .navItems li span{
     color:#7f00ff;
+    font-size: 1rem;
 }
 .links a:hover,
 .navItems li:hover a{
@@ -155,18 +156,29 @@ button:hover{
     background-color:#7f00ff;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 900px) {
     .Logo{
         font-size: 1.5rem;
     }
+    .navItems {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .navItems li {
+        flex: 0 0 auto;
+    }
     .navItems li a{
-        font-size: 1.2rem;
+        font-size: .5rem;
     }
     .links a{
         font-size: 1.5rem;
     }
     .topline{
         font-size: 1.5rem;
+    }
+     .navItems li span {
+        color: #7f00ff;
+        font-size: .6rem;
     }
     h1{
         font-size: 3em;

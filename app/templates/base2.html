@@ -27,8 +27,8 @@
                 <!-- <li><a href="{{ url_for('main.search_history') }}">Search History</a></li> -->
                 <li><a href="{{ url_for('main.buy_tokens') }}">Buy Token</a></li>
                 <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
-                <li class="nav-item">
-                    <span class="nav-link text-white">{{ current_user.tokens if current_user.tokens else 0}}</span>
+                <li class="navItem">
+                    <span>{{ current_user.tokens if current_user.tokens else 0}}</span>
                 </li>
                 {% endif %}
             </ul>

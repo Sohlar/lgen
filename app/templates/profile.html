@@ -5,7 +5,9 @@
     <h1 class="mb-4">Profile</h1>
     <p>Username: {{ user.username }}</p>
     <p>Email: {{ user.email }}</p>
+    {% if user.is_admin %}
     <p>Admin: {{ user.is_admin }}</p>
+    {% endif %}
     <!-- Add more user-related information here -->
 </div>
 {% endblock %}
