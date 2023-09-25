@@ -203,23 +203,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         var inputFields = document.querySelectorAll('.input-field');
         inputFields.forEach(function (input) {
-        
-            if (input.value) {
-                console.log("test")
-                console.log(input)
-                this.parentElement.classList.add('field--not-empty');
-                input.parentElement.querySelector('label').style.transform = 'translateY(-50%)'
-            }
-        
-            input.addEventListener('input', function () {
-                if (this.value) {
-                    this.parentElement.classList.add('field--not-empty');
-                    this.parentElement.querySelector('label').style.transform = 'translateY(-50%)'
-                } else {
-                    this.parentElement.classList.remove('field--not-empty');
-                    this.parentElement.querySelector('label').style.transform = 'translateY(0)'
-                }
-            });
+            input.value = '';
         });
     });
 </script>
