@@ -96,6 +96,13 @@
             color: #e43f5a; /* contrast color */
         }
 
+        .cost_amt {
+            right: '30%'
+        }
+        #cost {
+            text-indent: 10px;
+        }
+
         /* Responsive styles */
         @media (max-width: 768px) {
             .wrapper {
@@ -124,7 +131,6 @@
 {%endblock%}
 {% block content %}
     
-
 <div class="wrapper">
   <form action="{{ url_for('main.buy_tokens')}}" method="POST" id="payment-form">
       {{form.hidden_tag() }}
@@ -142,8 +148,8 @@
             </div>
           </div>
           <div class="col-md-3 cols0">
-            <div class="form-group">
-              {{ form.cost.label(for='cost', class='form-label text-white') }}
+            <div class="form-group cost_amt">
+              {{ form.cost.label(for='cost', class='form-label cost_amt text-white') }}
               {{ form.cost(class='form-control', id='cost', readonly=true) }}
             </div>
           </div>
@@ -170,13 +176,15 @@
 </footer>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var inputFields = document.querySelectorAll('.input-field');
+        var inputFields = document.querySelectorAll('.col-md-3.cols0 .form-group .input-field');
         inputFields.forEach(function (input) {
+            var parentElement = input.parentElement;
+            var label = parentElement.querySelector('label');
             input.addEventListener('input', function () {
                 if (this.value) {
-                    this.parentElement.classList.add('field--not-empty');
+                    parentElement.classList.add('field--not-empty');
                 } else {
-                    this.parentElement.classList.remove('field--not-empty');
+                    parentElement.classList.remove('field--not-empty');
                 }
             });
         });
@@ -199,12 +207,7 @@
             costLabel.style.transform = 'translateY(0)'
         }
     });
-    document.addEventListener('DOMContentLoaded', function () {
-        var inputFields = document.querySelectorAll('.input-field');
-        inputFields.forEach(function (input) {
-            input.value = '';
-        });
-    });
+
 </script>
 
 {% endblock %}

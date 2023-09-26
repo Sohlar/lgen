@@ -29,7 +29,7 @@ class TokenPurchaseForm(FlaskForm):
         "Number of tokens", validators=[DataRequired(), NumberRange(min=10)]
     )
     card_details = StringField("Card Details", validators=[DataRequired()])
-    cost = StringField("Cost", render_kw={'readonly': True})
+    cost = StringField("$ ", render_kw={'readonly': True})
     submit = SubmitField("Purchase")
 
 

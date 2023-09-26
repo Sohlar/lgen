@@ -22,6 +22,7 @@ from os import environ
 from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm
 from .helpers import get_profile_css_class
 from datetime import datetime
+import stripe
 
 
 from .tasks import search_engine_task, send_email_async, process_purchase
@@ -178,6 +179,27 @@ def buy_tokens():
         cost_per_token=cost_per_token,
         form=form,
     )
+
+
+@main_bp.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                    'price': '{{PRICE_ID}}',
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url='http://127.0.0.1:5000' + '/success.html',
+            cancel_url='YOUR_DOMAIN' + '/cancel.html',
+        )
+    except Exception as e:
+        return str(e)
+
+    return redirect(checkout_session.url, code=303)
 
 
 @main_bp.route("/login", methods=["GET", "POST"])
