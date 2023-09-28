@@ -8,7 +8,7 @@ from app import celery, mail
 from app.services.logger import logger
 from app.services.search_3 import GoogleSearch
 import stripe
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from flask import current_app, url_for, render_template
 
 @celery.task(bind=True, name="main.search_engine_task")
@@ -139,33 +139,54 @@ def get_most_recent_search_result(user):
 @celery.task(bind=True)
 def process_purchase(self, user_id, num_tokens, stripe_token):
     user = User.query.get(user_id)
+    stripe.api_key = 'your-secret-key'
 
     try:
         # Create a stripe charge for the token purchase
-        create_stripe_charge(num_tokens * 110, stripe_token, user.username)
+        charge = stripe.Charge.create(
+            amount=num_tokens * 110,
+            currency="usd",
+            source=stripe_token,
+            description=f"Token purchase for {user.username}",
+        )
 
-        # Update user's token balance
-        user.tokens += num_tokens
-        db.session.commit()
+        # Check if the charge was successful
+        if charge['paid']:
+            # Update user's token balance
+            try:
+                user.tokens += num_tokens
+                db.session.commit()
+            except Exception as e:
+                print(f"Error updating user's token balance: {e}")
+                db.session.rollback()
+                raise
+        else:
+            raise stripe.error.CardError("Charge was not successful.")
 
     except stripe.error.CardError as e:
         # You might want to handle the error, e.g., notify the user or retry the task
         self.retry(exc=e, countdown=60 * 5, max_retries=3)
-
-
-def create_stripe_charge(amount, token, username):
-    stripe.Charge.create(
-        amount=amount,
-        currency="usd",
-        source=token,
-        description=f"Token purchase for {username}",
-    )
-
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        raise
+    
+    
 @celery.task
-def send_password_reset_email(user):
+def send_password_reset_email(user_id):
+    # Retrieve the user using Flask-Login's current_user method
+    user = User.query.get(user_id)
+
+    # Check if the user exists
+    if user is None:
+        print("User not found.")
+        return "User not found."
+
     # Generate a secure token for password reset
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     token = serializer.dumps(user.email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
+
+    # Set an expiry time for the token
+    expiry = 3600  # 1 hour
 
     # Create a password reset URL with the token
     reset_url = url_for('main.reset_password', token=token, _external=True)
@@ -173,12 +194,22 @@ def send_password_reset_email(user):
     # Render an HTML template for the email body
     html = render_template('email/reset_password.html', reset_url=reset_url)
 
-    # Send the email asynchronously
-    send_email_async.delay(
-        subject='Reset Your Password',
-        recipient=user.email,
-        html_body=html
-    )
+    # Create a more relevant subject for the email
+    subject = "Password Reset Request"
+
+    msg = Message(subject, recipients=[user.email], html=html)  # recipient's email
+
+    # Send the email and handle any errors
+    try:
+        mail.send(msg)
+    except Exception as e:
+        if isinstance(e, BadSignature):
+            print("Invalid token.")
+        elif isinstance(e, SignatureExpired):
+            print("Token has expired.")
+        else:
+            print(f"An unexpected error occurred: {e}")
+        raise
 
 @celery.task
 def send_email_async(search_data, recipient):

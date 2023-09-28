@@ -20,13 +20,13 @@ from app.main.models import User, SearchHistory
 from app.extensions import db
 
 from os import environ
-from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm
+from app.main.forms import TokenPurchaseForm, SearchForm, AddTokensForm, ResetPasswordRequestForm
 from .helpers import get_profile_css_class
 from datetime import datetime
 import stripe
+from itsdangerous import URLSafeTimedSerializer
 
-
-from .tasks import search_engine_task, send_email_async, process_purchase
+from .tasks import search_engine_task, send_email_async, process_purchase, send_password_reset_email
 
 
 TOKENS_PER_RESULT = 1
@@ -232,24 +232,46 @@ def login():
         get_profile_css_class=get_profile_css_class,
     )
 
-@main_bp.route("/reset_password", methods=["GET", "POST"])
-def reset_password():
+@main_bp.route("/reset_password_request", methods=["GET", "POST"])
+def reset_password_request():
     if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
-    form = ResetPasswordForm()
+        return redirect(url_for('main.index'))
+    form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is not None:
-            send_password_reset_email(user)
-            flash("Check your email for the instructions to reset your password")
-            return redirect(url_for("main.login"))
-        else:
-            flash("Invalid email address")
-    return render_template(
-        "reset_password.html",
-        title="Reset Password",
-        form=form,
-    )
+        if user:
+            send_password_reset_email.delay(user.id)
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('main.login'))
+    return render_template('reset_password_request.html', title='Reset Password', form=form)
+
+@main_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=current_app.config['SECURITY_PASSWORD_SALT'],
+            max_age=3600
+        )
+    except:
+        flash('The password reset link is invalid or has expired.', 'error')
+        return redirect(url_for('main.login'))
+
+    form = ResetPasswordForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=email).first()
+        if user is None:
+            flash('Invalid email address!', 'error')
+            return redirect(url_for('main.login'))
+
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('main.login'))
+
+    return render_template('reset_password.html', form=form)
 
 
 @main_bp.route("/logout")
