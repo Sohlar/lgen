@@ -32,6 +32,10 @@ class TokenPurchaseForm(FlaskForm):
     cost = StringField("$ ", render_kw={'readonly': True})
     submit = SubmitField("Purchase")
 
+class ResetPasswordForm(FlaskForm):
+    email = StringField("Email Address", validators=[DataRequired()])
+    submit = SubmitField("Reset Password")
+
 
 
 

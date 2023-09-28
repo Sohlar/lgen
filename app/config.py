@@ -10,6 +10,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or "your-secret-key"
+    SECRET_PASSWORD_SALT = os.environ.get("SECRET_PASSWORD_SALT")
     STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
     url = urlparse(os.environ.get("DATABASE_URL"))
     url = url._replace(scheme=url.scheme.replace("postgres", "postgresql"))
@@ -28,6 +29,8 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+
+
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False

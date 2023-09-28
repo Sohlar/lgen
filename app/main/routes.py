@@ -14,6 +14,7 @@ from app.main.forms import (
     LoginForm,
     TokenPurchaseForm,
     RegistrationForm,
+    ResetPasswordForm
 )
 from app.main.models import User, SearchHistory
 from app.extensions import db
@@ -162,16 +163,26 @@ def buy_tokens():
     form = TokenPurchaseForm()
 
     cost_per_token = 0.1
-    # Check if form is submitted and vlidated
+    # Check if form is submitted and validated
     if form.validate_on_submit():
         # calc token cost
         num_tokens = form.num_tokens.data 
+        # Get stripe token from form data
+        stripe_token = request.form.get('stripeToken')
         # Create a stripe charge for the token purchase
-
-        process_purchase.delay(current_user.id, num_tokens, form.stripe_token.data)
-        return jsonify(
-            {"status": "processing", "message": "Your purchase is being processed."}
-        )
+        try:
+            process_purchase.delay(current_user.id, num_tokens, stripe_token)
+            return jsonify(
+                {"status": "processing", "message": "Your purchase is being processed."}
+            )
+        except stripe.error.StripeError as e:
+            return jsonify(
+                {"status": "error", "message": "Stripe error: {}".format(e)}
+            )
+        except Exception as e:
+            return jsonify(
+                {"status": "error", "message": "Unexpected error: {}".format(e)}
+            )
     return render_template(
         "buy_tokens.html",
         title="Buy Tokens",
@@ -179,7 +190,7 @@ def buy_tokens():
         cost_per_token=cost_per_token,
         form=form,
     )
-
+""" 
 
 @main_bp.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
@@ -200,7 +211,7 @@ def create_checkout_session():
         return str(e)
 
     return redirect(checkout_session.url, code=303)
-
+ """
 
 @main_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -219,6 +230,25 @@ def login():
         title="Sign In",
         form=form,
         get_profile_css_class=get_profile_css_class,
+    )
+
+@main_bp.route("/reset_password", methods=["GET", "POST"])
+def reset_password():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.index"))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None:
+            send_password_reset_email(user)
+            flash("Check your email for the instructions to reset your password")
+            return redirect(url_for("main.login"))
+        else:
+            flash("Invalid email address")
+    return render_template(
+        "reset_password.html",
+        title="Reset Password",
+        form=form,
     )
 
 

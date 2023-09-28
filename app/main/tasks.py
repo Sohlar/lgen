@@ -8,6 +8,8 @@ from app import celery, mail
 from app.services.logger import logger
 from app.services.search_3 import GoogleSearch
 import stripe
+from itsdangerous import URLSafeTimedSerializer
+from flask import current_app, url_for, render_template
 
 @celery.task(bind=True, name="main.search_engine_task")
 def search_engine_task(self, search_history_id, query, cost, user_id):
@@ -159,6 +161,24 @@ def create_stripe_charge(amount, token, username):
         description=f"Token purchase for {username}",
     )
 
+@celery.task
+def send_password_reset_email(user):
+    # Generate a secure token for password reset
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    token = serializer.dumps(user.email, salt=current_app.config['SECURITY_PASSWORD_SALT'])
+
+    # Create a password reset URL with the token
+    reset_url = url_for('main.reset_password', token=token, _external=True)
+
+    # Render an HTML template for the email body
+    html = render_template('email/reset_password.html', reset_url=reset_url)
+
+    # Send the email asynchronously
+    send_email_async.delay(
+        subject='Reset Your Password',
+        recipient=user.email,
+        html_body=html
+    )
 
 @celery.task
 def send_email_async(search_data, recipient):
