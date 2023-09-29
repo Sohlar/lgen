@@ -66,8 +66,6 @@ class SearchForm(FlaskForm):
     query = StringField("Query", validators=[DataRequired()])
     # engine = SelectField('Engine', choices=[('engine1', 'Engine 1'), ('engine2', 'Engine 2')], validators=[DataRequired()])
     desired_results = IntegerField("Tokens", validators=[DataRequired()], default=None)
-    location = StringField("Location", validators=[DataRequired()], default=None)
-    radius = IntegerField("Radius", validators=[DataRequired()], default=None)
     submit = SubmitField("Search")
 
 

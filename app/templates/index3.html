@@ -164,18 +164,6 @@
                     {{ form.desired_results(class='form-control input-field', id='desired_results') }}
                 </div>
             </div>
-            <div class="col-md-3 cols0">
-                <div class="form-group">
-                    {{ form.location.label(for='location', class='form-label text-white') }}
-                    {{ form.location(class='form-control input-field', id='location', placeholder='') }}
-                </div>
-            </div>
-            <div class="col-md-3 cols0">
-                <div class="form-group">
-                    {{ form.radius.label(for='radius', class='form-label text-white') }}
-                    {{ form.radius(class='form-control input-field', id='radius') }}
-                </div>
-            </div>
         </div>
         {{ form.submit(class='btn btn-primary') }}
     </form>

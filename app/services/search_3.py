@@ -14,7 +14,7 @@ from .config import GOOG_API_KEY, GOOGLE_CX
 
 
 class GoogleSearch:
-    def search(self, query, start_index=10, num_urls=9):
+    def search(self, query, start_index=5, num_urls=9):
         logger.debug("Starting Google Search")
         for start in range(start_index, start_index + num_urls, 10):
             base_url = "https://www.googleapis.com/customsearch/v1"

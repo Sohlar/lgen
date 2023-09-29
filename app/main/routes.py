@@ -58,10 +58,7 @@ def index():
     results = []
     if form.validate_on_submit():
         my_query = f"{form.query.data}"
-        if form.location.data:
-            my_query += f" {form.location.data}"
-        if form.radius.data:
-            my_query += f" within {form.radius.data} miles"
+
         # Currently only using Bing, but will combine all search together concurrent
         my_engine = "google"
         desired_results = form.desired_results.data
