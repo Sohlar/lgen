@@ -191,7 +191,15 @@
     document.addEventListener('DOMContentLoaded', function () {
         var inputFields = document.querySelectorAll('.input-field');
         inputFields.forEach(function (input) {
-            input.value = '';
+            var parentElement = input.parentElement;
+            var label = parentElement.querySelector('label');
+            input.addEventListener('input', function () {
+                if (this.value) {
+                    parentElement.classList.add('field--not-empty');
+                } else {
+                    parentElement.classList.remove('field--not-empty');
+                }
+            });
         });
     });
 </script>

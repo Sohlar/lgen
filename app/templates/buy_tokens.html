@@ -257,7 +257,12 @@
         var numTokens = parseInt(e.target.value);
         console.log('costPerToken:', costPerToken);
         console.log('numTokens:', numTokens);
-        document.getElementById('cost').value = costPerToken * numTokens;
+
+        if (numTokens == NaN) {
+            document.getElementById('cost').value = 0
+        } else {
+            document.getElementById('cost').value = costPerToken * numTokens;
+        }        
 
         var costLabel = document.querySelector("label[for='cost']");
 
