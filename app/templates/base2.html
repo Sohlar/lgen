@@ -14,22 +14,19 @@
     <div class="container">
         <nav>
             <a class="Logo navbar-brand text-white" href="{{ url_for('main.index') }}">DataBox</a>
-            <!-- <div class="Logo"><a href="{{ url_for('main.index') }}">DataBox</a></div> -->
             <ul class="navItems">
-                {% if not current_user.is_authenticated %}
-                <li><a href="{{ url_for('main.login') }}">Login</a></li>
-                <li><a href="{{ url_for('main.register') }}">Register</a></li>
-                {% endif %}
-                {% if current_user.is_admin %}
-                <li><a href="{{ url_for('main.add_tokens') }}">Admin: Add Token</a></li>
-                {% endif %}
                 {% if current_user.is_authenticated %}
-                <!-- <li><a href="{{ url_for('main.search_history') }}">Search History</a></li> -->
                 <li><a href="{{ url_for('main.buy_tokens') }}">Buy Token</a></li>
                 <li><a href="{{ url_for('main.profile') }}">Profile</a></li>
                 <li class="navItem">
                     <span>{{ current_user.tokens if current_user.tokens else 0}}</span>
                 </li>
+                {% if current_user.is_admin %}
+                <li><a href="{{ url_for('main.add_tokens') }}">Admin: Add Token</a></li>
+                {% endif %}
+                {% else %}
+                <li><a href="{{ url_for('main.login') }}">Login</a></li>
+                <li><a href="{{ url_for('main.register') }}">Register</a></li>
                 {% endif %}
             </ul>
         </nav>
